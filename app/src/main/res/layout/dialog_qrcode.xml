@@ -7,6 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/sym_def_app_icon"
+        android:id="@+id/qrcode"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

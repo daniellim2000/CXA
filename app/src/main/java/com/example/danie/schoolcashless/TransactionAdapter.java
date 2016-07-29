@@ -37,7 +37,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         DecimalFormat df = new DecimalFormat("#.00");
         holder.mDate.setText(transaction.getDate());
         holder.mPrice.setText('$' + df.format(transaction.getPrice()));
-        holder.mStore.setText(transaction.retrieveStoreName());
+        holder.mStore.setText("Albert");
+        //holder.mStore.setText(transaction.retrieveStoreName());
     }
 
     @Override

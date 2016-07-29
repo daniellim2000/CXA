@@ -20,6 +20,12 @@
 
     </RadioGroup>
 
+    <android.support.design.widget.TextInputEditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Amount"
+        android:id="@+id/dialog_payment_amount"/>
+
 
 
 </LinearLayout>

@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if (userSession != null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, SavingsActivity.class);
             startActivity(intent);
         }
     }
