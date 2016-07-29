@@ -17,9 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SavingsFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SavingsFragment.OnFragmentInteractionListener, PaymentFragment.OnFragmentInteractionListener {
 
     Fragment savingsFragment = SavingsFragment.newInstance();
+    Fragment paymentFragment = PaymentFragment.newInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             ft.replace(R.id.container, savingsFragment).commit();
         } else if (id == R.id.nav_payment) {
-
+            ft.replace(R.id.container, paymentFragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -97,4 +98,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onPaymentFragmentInteraction(Uri uri) {
+        
+    }
 }

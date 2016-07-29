@@ -1,9 +1,12 @@
 package com.example.danie.schoolcashless;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,8 @@ public class PaymentFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
 
     private OnFragmentInteractionListener mListener;
+
+    private FloatingActionButton fab;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -51,7 +56,17 @@ public class PaymentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_payment, container, false);
+        View layout = inflater.inflate(R.layout.fragment_payment, container, false);
+
+        fab = (FloatingActionButton) layout.findViewById(R.id.payment_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTransaction();
+            }
+        });
+
+        return layout;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -91,5 +106,39 @@ public class PaymentFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onPaymentFragmentInteraction(Uri uri);
+    }
+
+    private void createTransaction() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getContext());
+
+        // set title
+        builder.setTitle("Create Transaction");
+        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
+        builder.setView(dialogView);
+        // set dialog message
+        builder
+                .setCancelable(true)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = builder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    private void generateQRCode() {
+
     }
 }
