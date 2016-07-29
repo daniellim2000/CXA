@@ -57,6 +57,13 @@ public class LoginActivity extends AppCompatActivity {
                 register();
             }
         });
+
+        mForgotView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forgot();
+            }
+        });
     }
 
     private boolean isEmailValid(String email) {
@@ -116,7 +123,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void register() {
+        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        LoginActivity.this.startActivity(intent);
+    }
 
+    private void forgot() {
+        Intent intent = new Intent(LoginActivity.this, ForgotActivity.class);
+        LoginActivity.this.startActivity(intent);
     }
 
     public class UserLoginTask extends AsyncTask<Void, Void, Integer> {

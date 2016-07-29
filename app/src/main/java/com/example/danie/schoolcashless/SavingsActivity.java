@@ -3,9 +3,9 @@ package com.example.danie.schoolcashless;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +29,6 @@ import com.example.danie.schoolcashless.model.exception.BadAuthenticationExcepti
 import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.google.zxing.qrcode.encoder.QRCode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,11 +36,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class SavingsActivity extends AppCompatActivity {
 
@@ -49,6 +45,11 @@ public class SavingsActivity extends AppCompatActivity {
     private List<Transaction> transactionList;
     private TransactionAdapter transactionAdapter;
     private TextView mBalanceView;
+
+    private GetTransactionsTask mTransactionsTask;
+    private GetBalanceTask mBalanceTask;
+    private JSONArray jsonTransactions;
+    private double mBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +76,6 @@ public class SavingsActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list_transactions);
         transactionList = new ArrayList<Transaction>();
-        try {
-            getTransactions();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (BadResponseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BadAuthenticationException e) {
-            e.printStackTrace();
-        }
 
         transactionAdapter = new TransactionAdapter(transactionList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -106,35 +96,26 @@ public class SavingsActivity extends AppCompatActivity {
             }
         }));
 
-//        mBalanceView = (TextView) findViewById(R.id.balance);
-//        try {
-//            mBalanceView.setText("$" + Double.toString(UserSession.getInstance().getBalance()));
-//        } catch (BadResponseException e) {
-//            e.printStackTrace();
-//        } catch (BadAuthenticationException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        mTransactionsTask = new GetTransactionsTask();
+        mTransactionsTask.execute((Void) null);
+
+        mBalanceView = (TextView) findViewById(R.id.balance);
+        mBalanceTask = new GetBalanceTask();
+        mBalanceTask.execute((Void) null);
     }
 
     private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
-//        JSONArray jsonArray = null;
-//        jsonArray = UserSession.getInstance().getTransactions(0, 100);
-//
-//        if (jsonArray != null) {
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject json = jsonArray.getJSONObject(i);
-//                String name = (String) json.get("from");
-//                Number value = (Number) json.get("value");
-//                Transaction t = new Transaction("", name, (Double) value);
-//                transactionList.add(t);
-//            }
-//        }
-//
-//        transactionAdapter.notifyDataSetChanged();
+        if (jsonTransactions != null) {
+            for (int i = 0; i < jsonTransactions.length(); i++) {
+                JSONObject json = jsonTransactions.getJSONObject(i);
+                String name = (String) json.get("from");
+                Number value = (Number) json.get("value");
+                Transaction t = new Transaction("", name, value.doubleValue());
+                transactionList.add(t);
+            }
+        }
+
+        transactionAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -270,6 +251,112 @@ public class SavingsActivity extends AppCompatActivity {
         });
 
         builder.create().show();
+    }
+
+    public class GetTransactionsTask extends AsyncTask<Void, Void, Integer> {
+
+        GetTransactionsTask() {
+
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+            try {
+                jsonTransactions = UserSession.getInstance().getTransactions(0, 100);
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return 0;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return 2;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            mTransactionsTask = null;
+            showProgress(false);
+
+            if (success == 200) {
+                try {
+                    getTransactions();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (BadResponseException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (BadAuthenticationException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionsTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class GetBalanceTask extends AsyncTask<Void, Void, Integer> {
+
+        GetBalanceTask() {
+
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+            try {
+                mBalance = UserSession.getInstance().getBalance();
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return 0;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return 2;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            mTransactionsTask = null;
+            showProgress(false);
+
+            if (success == 200) {
+                mBalanceView.setText("$" + mBalance);
+            } else {
+                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionsTask = null;
+            showProgress(false);
+        }
+    }
+
+    private void showProgress(boolean show) {
+
     }
 
 }

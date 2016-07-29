@@ -131,7 +131,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... params) {
-
             try {
                 UserSession.createUser(mName, mEmail, mPassword);
             } catch (BadResponseException e) {
