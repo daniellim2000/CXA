@@ -29,6 +29,7 @@ import com.google.zxing.qrcode.encoder.QRCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class SavingsActivity extends AppCompatActivity {
 
@@ -159,7 +160,7 @@ public class SavingsActivity extends AppCompatActivity {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
             {
-                if(mAmount.getText().toString().matches("[0-9]*.[0-9]{2}"))
+                if(mAmount.getText().toString().matches("\\d*\\.\\d{2}"))
                     return "";
                 return null;
             }

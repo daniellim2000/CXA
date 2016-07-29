@@ -13,6 +13,17 @@
     tools:context="com.example.danie.schoolcashless.SavingsActivity"
     tools:showIn="@layout/activity_savings">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/savings_list_heading"
+        android:textSize="20sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_transactions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,26 +37,6 @@
             android:text="@string/savings_view_money_left"
             android:textSize="28sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="8dp"
-            android:text="$0"
-            android:textSize="24sp" />
-
-
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/savings_list_heading"
-        android:textSize="20sp" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_transactions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

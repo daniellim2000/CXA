@@ -15,7 +15,7 @@
 
     <!-- Savings Fragment -->
     <string name="savings_view_title">Money spent</string>
-    <string name="savings_view_money_left">Money left</string>
+    <string name="savings_view_money_left">Balance</string>
     <string name="savings_list_heading">Recent transactions</string>
 
     <!-- Payments Fragment -->
