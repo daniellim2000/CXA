@@ -11,4 +11,10 @@
     <string name="login_btn_password">Password</string>
     <string name="login_btn_login">Login</string>
     <string name="login_btn_forgot">Forgot Password</string>
+
+    <!-- Savings View -->
+    <string name="savings_view_title">Money spent</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
