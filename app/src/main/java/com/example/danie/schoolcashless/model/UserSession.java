@@ -51,6 +51,7 @@ public class UserSession {
         try {
             HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + "/auth").openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
+            connection.setRequestProperty("Content-Type", "application/json");
             //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
             connection.connect();
@@ -106,7 +107,7 @@ public class UserSession {
             data.put("name", name);
             data.put("username", username);
             data.put("password", password);
-            data.put("avatar", new JSONObject().put("id", ""));
+            //data.put("avatar", new JSONObject().put("id", ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -210,14 +211,17 @@ public class UserSession {
      * @throws BadAuthenticationException
      * @throws BadResponseException
      * @throws IOException
-     * @throws JSONException
      */
-    public JSONObject createReceiveTransaction(double value) throws BadAuthenticationException, BadResponseException, IOException, JSONException{
-        JSONObject data = new JSONObject();
-        data.put("value", value);
-        data.put("type", "receive");
-
-        return new JSONObject(requestPost("/transactions", data));
+    public JSONObject createReceiveTransaction(double value) throws BadAuthenticationException, BadResponseException, IOException {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("value", value);
+            data.put("type", "receive");
+            return new JSONObject(requestPost("/transactions", data));
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -248,7 +252,7 @@ public class UserSession {
     }
 
 
-    public Boolean transactionScanned(int id) {
+    public Boolean transactionScanned(String id) {
         try {
             JSONObject response = new JSONObject(requestGet("/transactions/" + id + "/scanned"));
             return response.getBoolean("status");
@@ -393,6 +397,7 @@ public class UserSession {
         try {
             HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + url).openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
+            connection.setRequestProperty("Content-Type", "application/json");
             //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestMethod("POST");
 
@@ -436,6 +441,7 @@ public class UserSession {
         try {
             HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + url).openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
+            connection.setRequestProperty("Content-Type", "application/json");
             //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
             connection.setRequestMethod(method);

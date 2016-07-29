@@ -23,15 +23,20 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.victor.loading.rotate.RotateLoading;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class QRCodeActivity extends AppCompatActivity {
 
     ImageView imageView;
     UserSession userSession;
     JSONObject json;
+    String id;
     CreateTransaction mCreateTask;
 
     @Override
@@ -53,12 +58,20 @@ public class QRCodeActivity extends AppCompatActivity {
         mCreateTask = new CreateTransaction(isCharge, value);
         mCreateTask.execute((Void) null);
 
-        try {
-            Bitmap bitmap = generateQRCode(json.getString("code"));
-            imageView.setImageBitmap(bitmap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                if(userSession.transactionScanned(id)) {
+                    scheduler.shutdown();
+                }
+            }
+        }, 0, 200, TimeUnit.MILLISECONDS);
     }
 
     private Bitmap generateQRCode(String data)throws WriterException {
@@ -96,6 +109,7 @@ public class QRCodeActivity extends AppCompatActivity {
                 } else {
                     json = userSession.createReceiveTransaction(value);
                 }
+                id = json.getString("_id");
             } catch(Exception e) {
                 e.printStackTrace();
                 json = null;
@@ -108,7 +122,14 @@ public class QRCodeActivity extends AppCompatActivity {
         protected void onPostExecute(final JSONObject success) {
             mCreateTask = null;
             if (success != null) {
-                finish();
+                try {
+                    Bitmap bitmap = generateQRCode(json.getString("code"));
+                    imageView.setImageBitmap(bitmap);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (com.google.zxing.WriterException e) {
+                    e.printStackTrace();
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "Unable to create QR Code", Toast.LENGTH_SHORT).show();
             }
