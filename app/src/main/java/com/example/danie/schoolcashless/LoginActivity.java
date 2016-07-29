@@ -104,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         if (userSession != null) {
             Intent intent = new Intent(this, SavingsActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
