@@ -11,11 +11,12 @@ public class Transaction {
 
     private String date, isoTime;
     private int storeId;
+    private String from;
     private double price;
 
-    public Transaction(String isoTime, int storeId, double price) {
+    public Transaction(String isoTime, String from, double price) {
         this.isoTime = isoTime;
-        this.storeId = storeId;
+        this.from = from;
         this.price = price;
     }
 
@@ -61,5 +62,13 @@ public class Transaction {
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         String str = fmt.print(dt);
         return str;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 }

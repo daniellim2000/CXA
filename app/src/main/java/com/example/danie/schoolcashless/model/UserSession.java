@@ -168,8 +168,8 @@ public class UserSession {
      * @throws IOException
      * @throws JSONException
      */
-    public JSONObject getTransactions(int from, int max) throws BadResponseException, BadAuthenticationException, IOException, JSONException{
-        return new JSONObject(requestGet("/transactions?max=" + max + "&from=" + from));
+    public JSONArray getTransactions(int from, int max) throws BadResponseException, BadAuthenticationException, IOException, JSONException{
+        return new JSONArray(requestGet("/transactions?max=" + max + "&from=" + from));
     }
 
     /**

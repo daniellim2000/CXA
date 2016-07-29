@@ -69,8 +69,6 @@ public class SavingsFragment extends Fragment {
         View layout = inflater.inflate(R.layout.fragment_savings, container, false);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.list_transactions);
         transactionList = new ArrayList<Transaction>();
-        transactionList.add(new Transaction("29 June", 100, 300.00));
-        transactionList.add(new Transaction("30 June", 200, 300.00));
 
         transactionAdapter = new TransactionAdapter(transactionList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
