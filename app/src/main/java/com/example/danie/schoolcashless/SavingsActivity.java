@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.qrcode.encoder.QRCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class SavingsActivity extends AppCompatActivity {
         fabReceive .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startScannerActivity();
+                startActivityForResult(new Intent(SavingsActivity.this, ScannerActivity.class), 0x0000c0de);
             }
         });
 
@@ -81,10 +82,6 @@ public class SavingsActivity extends AppCompatActivity {
 
             }
         }));
-    }
-
-    private void startScannerActivity() {
-        startActivityForResult(new Intent(SavingsActivity.this, ScannerActivity.class), 0x0000c0de);
     }
 
     @Override
@@ -175,7 +172,9 @@ public class SavingsActivity extends AppCompatActivity {
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                Intent intent = new Intent(SavingsActivity.this, QRCodeActivity.class);
+                intent.putExtra("data", mAmount.getText().toString());
+                startActivity(intent);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
