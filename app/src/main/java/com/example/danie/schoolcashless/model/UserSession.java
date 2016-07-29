@@ -184,14 +184,18 @@ public class UserSession {
      * @throws BadAuthenticationException
      * @throws BadResponseException
      * @throws IOException
-     * @throws JSONException
      */
-    public JSONObject createSendTransaction(double value) throws BadAuthenticationException, BadResponseException, IOException, JSONException{
+    public JSONObject createSendTransaction(double value) throws BadAuthenticationException, BadResponseException, IOException{
+
+        try {
             JSONObject data = new JSONObject();
             data.put("value", value);
             data.put("type", "send");
-
             return new JSONObject(requestPost("/transactions", data));
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -387,10 +391,9 @@ public class UserSession {
      */
     public static String requestPostWithoutAuth(String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(ENDPOINT + url).openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + "url").openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept-Version", APIVER);
+            //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestMethod("POST");
 
             connection.setDoOutput(true);
@@ -435,6 +438,7 @@ public class UserSession {
             connection.setRequestProperty("Accept-Charset", "UTF-8");
             //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
+            connection.setRequestMethod(method);
 
             if (data != null) {
                 connection.setDoOutput(true);
