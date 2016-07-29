@@ -8,7 +8,7 @@
             android:title="Savings" />
         <item
             android:id="@+id/nav_payment"
-            android:icon="@drawable/ic_attach_money_black_24dp"
+            android:icon="@drawable/ic_money_24dp"
             android:title="Payment" />
     </group>
 
