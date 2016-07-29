@@ -49,7 +49,7 @@ public class UserSession {
         this.username = username;
         this.password = password;
         try {
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(ENDPOINT + "/auth").openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + "/auth").openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
             //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
@@ -431,12 +431,10 @@ public class UserSession {
 
     private String requestMethod(String method, String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(ENDPOINT + url).openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + url).openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept-Version", APIVER);
+            //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
-            connection.setRequestMethod(method);
 
             if (data != null) {
                 connection.setDoOutput(true);
