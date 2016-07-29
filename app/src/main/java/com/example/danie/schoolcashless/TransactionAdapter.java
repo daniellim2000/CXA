@@ -1,10 +1,14 @@
 package com.example.danie.schoolcashless;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -33,7 +37,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         DecimalFormat df = new DecimalFormat("#.00");
         holder.mDate.setText(transaction.getDate());
         holder.mPrice.setText('$' + df.format(transaction.getPrice()));
-        holder.mStore.setText(transaction.getStore());
+        holder.mStore.setText(transaction.retrieveStoreName());
     }
 
     @Override
