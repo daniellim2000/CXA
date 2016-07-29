@@ -1,6 +1,7 @@
 package com.example.danie.schoolcashless;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class SavingsActivity extends AppCompatActivity {
 
@@ -29,15 +35,22 @@ public class SavingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabReceive = (FloatingActionButton) findViewById(R.id.fab_receive);
+        fabReceive .setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startScannerActivity();
+            }
+        });
+
+        FloatingActionButton fabSend = (FloatingActionButton) findViewById(R.id.fab_send);
+        fabSend .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
-
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list_transactions);
         transactionList = new ArrayList<Transaction>();
@@ -62,6 +75,24 @@ public class SavingsActivity extends AppCompatActivity {
 
             }
         }));
+    }
+
+    private void startScannerActivity() {
+        startActivityForResult(new Intent(SavingsActivity.this, ScannerActivity.class), 0x0000c0de);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     public interface ClickListener {

@@ -25,7 +25,7 @@ public class ScannerActivity extends CaptureActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        scannerView.getLayoutParams().height = (int)(metrics.heightPixels / 0.7);
+        scannerView.getLayoutParams().height = (int)(metrics.heightPixels * 0.7);
     }
 
     @Override
