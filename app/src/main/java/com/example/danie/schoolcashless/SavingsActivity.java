@@ -20,21 +20,13 @@ import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.example.danie.schoolcashless.model.UserSession;
-import com.example.danie.schoolcashless.model.exception.BadAuthenticationException;
-import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.encoder.QRCode;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -47,8 +39,6 @@ public class SavingsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private List<Transaction> transactionList;
     private TransactionAdapter transactionAdapter;
-
-    private TextView mBalanceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +65,8 @@ public class SavingsActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list_transactions);
         transactionList = new ArrayList<Transaction>();
-        try {
-            getTransactions();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (BadResponseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BadAuthenticationException e) {
-            e.printStackTrace();
-        }
+        transactionList.add(new Transaction("29 June", 100, 300.00));
+        transactionList.add(new Transaction("30 June", 200, 300.00));
 
         transactionAdapter = new TransactionAdapter(transactionList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -105,36 +86,6 @@ public class SavingsActivity extends AppCompatActivity {
 
             }
         }));
-
-        mBalanceView = (TextView) findViewById(R.id.balance);
-        try {
-            mBalanceView.setText("$" + Double.toString(UserSession.getInstance().getBalance()));
-        } catch (BadResponseException e) {
-            e.printStackTrace();
-        } catch (BadAuthenticationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
-        JSONArray jsonArray = null;
-        jsonArray = UserSession.getInstance().getTransactions(0, 100);
-
-        if (jsonArray != null) {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject json = jsonArray.getJSONObject(i);
-                String name = (String) json.get("from");
-                Number value = (Number) json.get("value");
-                Transaction t = new Transaction("", name, (Double) value);
-                transactionList.add(t);
-            }
-        }
-
-        transactionAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -206,6 +157,8 @@ public class SavingsActivity extends AppCompatActivity {
         View layout = getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
 
         final TextInputEditText mAmountView = (TextInputEditText) layout.findViewById(R.id.dialog_payment_amount);
+        final RadioButton mChargeButton = (RadioButton)findViewById(R.id.dialog_charge);
+        final RadioButton mCreditButton = (RadioButton)findViewById(R.id.dialog_credit);
 
         mAmountView.addTextChangedListener(new TextWatcher() {
             DecimalFormat dec = new DecimalFormat("0.00");
@@ -249,7 +202,14 @@ public class SavingsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(SavingsActivity.this, QRCodeActivity.class);
-                intent.putExtra("data", mAmountView.getText().toString());
+                intent.putExtra("value", mAmountView.getText().toString());
+
+                if(mChargeButton.isChecked()) {
+                    intent.putExtra("isCharge", true);
+                } else if(mCreditButton.isChecked()) {
+                    intent.putExtra("isCharge", false);
+                }
+
                 startActivity(intent);
             }
         });

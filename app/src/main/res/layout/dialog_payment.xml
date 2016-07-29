@@ -6,15 +6,18 @@
     android:padding="16dp">
 
     <RadioGroup
+        android:id="@+id/payment_radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RadioButton
+            android:id="@+id/dialog_charge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Charge" />
 
         <RadioButton
+            android:id="@+id/dialog_credit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Credit" />
