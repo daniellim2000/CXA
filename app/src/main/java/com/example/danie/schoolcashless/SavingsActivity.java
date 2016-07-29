@@ -3,6 +3,7 @@ package com.example.danie.schoolcashless;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -50,6 +51,9 @@ public class SavingsActivity extends AppCompatActivity {
     private TransactionAdapter transactionAdapter;
     private TextView mBalanceView;
 
+    private GetTransactionsTask mTask;
+    private JSONArray jsonTransactions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,17 +79,6 @@ public class SavingsActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list_transactions);
         transactionList = new ArrayList<Transaction>();
-        try {
-            getTransactions();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (BadResponseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BadAuthenticationException e) {
-            e.printStackTrace();
-        }
 
         transactionAdapter = new TransactionAdapter(transactionList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -106,6 +99,9 @@ public class SavingsActivity extends AppCompatActivity {
             }
         }));
 
+        mTask = new GetTransactionsTask();
+        mTask.execute((Void) null);
+
         mBalanceView = (TextView) findViewById(R.id.balance);
         try {
             mBalanceView.setText("$" + Double.toString(UserSession.getInstance().getBalance()));
@@ -121,12 +117,9 @@ public class SavingsActivity extends AppCompatActivity {
     }
 
     private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
-        JSONArray jsonArray = null;
-        jsonArray = UserSession.getInstance().getTransactions(0, 100);
-
-        if (jsonArray != null) {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject json = jsonArray.getJSONObject(i);
+        if (jsonTransactions != null) {
+            for (int i = 0; i < jsonTransactions.length(); i++) {
+                JSONObject json = jsonTransactions.getJSONObject(i);
                 String name = (String) json.get("from");
                 Number value = (Number) json.get("value");
                 Transaction t = new Transaction("", name, (Double) value);
@@ -270,6 +263,67 @@ public class SavingsActivity extends AppCompatActivity {
         });
 
         builder.create().show();
+    }
+
+    public class GetTransactionsTask extends AsyncTask<Void, Void, Integer> {
+
+        GetTransactionsTask() {
+
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+            try {
+                jsonTransactions = UserSession.getInstance().getTransactions(0, 100);
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return 0;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return 2;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            mTask = null;
+            showProgress(false);
+
+            if (success == 200) {
+                finish();
+                try {
+                    getTransactions();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (BadResponseException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (BadAuthenticationException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTask = null;
+            showProgress(false);
+        }
+    }
+
+    private void showProgress(boolean show) {
+
     }
 
 }
