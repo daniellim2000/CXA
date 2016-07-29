@@ -391,7 +391,7 @@ public class UserSession {
      */
     public static String requestPostWithoutAuth(String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         try {
-            HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + "url").openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + url).openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
             //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestMethod("POST");
