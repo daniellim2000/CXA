@@ -20,6 +20,7 @@ import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -156,6 +157,8 @@ public class SavingsActivity extends AppCompatActivity {
         View layout = getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
 
         final TextInputEditText mAmountView = (TextInputEditText) layout.findViewById(R.id.dialog_payment_amount);
+        final RadioButton mChargeButton = (RadioButton)findViewById(R.id.dialog_charge);
+        final RadioButton mCreditButton = (RadioButton)findViewById(R.id.dialog_credit);
 
         mAmountView.addTextChangedListener(new TextWatcher() {
             DecimalFormat dec = new DecimalFormat("0.00");
@@ -199,7 +202,14 @@ public class SavingsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(SavingsActivity.this, QRCodeActivity.class);
-                intent.putExtra("data", mAmountView.getText().toString());
+                intent.putExtra("value", mAmountView.getText().toString());
+
+                if(mChargeButton.isChecked()) {
+                    intent.putExtra("isCharge", true);
+                } else if(mCreditButton.isChecked()) {
+                    intent.putExtra("isCharge", false);
+                }
+
                 startActivity(intent);
             }
         });
