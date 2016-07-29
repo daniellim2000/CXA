@@ -1,16 +1,20 @@
 package com.example.danie.schoolcashless;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 /**
  * Created by danie on 29/7/2016.
  */
 public class Transaction {
 
-    private String date;
+    private String date, isoTime;
     private int storeId;
     private double price;
 
-    public Transaction(String date, int storeId, double price) {
-        this.date = date;
+    public Transaction(String isoTime, int storeId, double price) {
+        this.isoTime = isoTime;
         this.storeId = storeId;
         this.price = price;
     }
@@ -42,5 +46,20 @@ public class Transaction {
     public String retrieveStoreName() {
         String storeName = "";
         return storeName;
+    }
+
+    public String getIsoTime() {
+        return isoTime;
+    }
+
+    public void setIsoTime(String isoTime) {
+        this.isoTime = isoTime;
+    }
+
+    public String retrieveDate() {
+        DateTime dt = new DateTime();
+        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+        String str = fmt.print(dt);
+        return str;
     }
 }
