@@ -5,12 +5,13 @@ package com.example.danie.schoolcashless;
  */
 public class Transaction {
 
-    private String date, store;
+    private String date;
+    private int storeId;
     private double price;
 
-    public Transaction(String date, String store, double price) {
+    public Transaction(String date, int storeId, double price) {
         this.date = date;
-        this.store = store;
+        this.storeId = storeId;
         this.price = price;
     }
 
@@ -22,12 +23,12 @@ public class Transaction {
         this.date = date;
     }
 
-    public String getStore() {
-        return store;
+    public int getStoreId() {
+        return storeId;
     }
 
-    public void setStore(String store) {
-        this.store = store;
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 
     public double getPrice() {
@@ -36,5 +37,10 @@ public class Transaction {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String retrieveStoreName() {
+        String storeName = "";
+        return storeName;
     }
 }

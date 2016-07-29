@@ -63,8 +63,9 @@ public class UserSession {
         }
     }
 
-    public static void createInstance(String username, String password) throws BadResponseException, BadAuthenticationException, IOException {
+    public static UserSession createInstance(String username, String password) throws BadResponseException, BadAuthenticationException, IOException {
         userSession = new UserSession(username, password);
+        return userSession;
     }
 
     public static UserSession getInstance() {
