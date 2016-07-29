@@ -26,6 +26,8 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.encoder.QRCode;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -45,7 +47,7 @@ public class SavingsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fabReceive = (FloatingActionButton) findViewById(R.id.fab_receive);
-        fabReceive .setOnClickListener(new View.OnClickListener() {
+        fabReceive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivityForResult(new Intent(SavingsActivity.this, ScannerActivity.class), 0x0000c0de);
@@ -53,7 +55,7 @@ public class SavingsActivity extends AppCompatActivity {
         });
 
         FloatingActionButton fabSend = (FloatingActionButton) findViewById(R.id.fab_send);
-        fabSend .setOnClickListener(new View.OnClickListener() {
+        fabSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createTransaction();
@@ -88,8 +90,8 @@ public class SavingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
+        if (result != null) {
+            if (result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
@@ -148,25 +150,48 @@ public class SavingsActivity extends AppCompatActivity {
         }
     }
 
-    private void createTransaction(){
+    private void createTransaction() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Create Transaction");
         View layout = getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
 
-        final TextInputEditText mAmount = (TextInputEditText) layout.findViewById(R.id.dialog_payment_amount);
+        final TextInputEditText mAmountView = (TextInputEditText) layout.findViewById(R.id.dialog_payment_amount);
 
-        InputFilter filter = new InputFilter()
-        {
+        mAmountView.addTextChangedListener(new TextWatcher() {
+            DecimalFormat dec = new DecimalFormat("0.00");
+
             @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
-            {
-                if(mAmount.getText().toString().matches("\\d*\\.\\d{2}"))
+            public void afterTextChanged(Editable arg0) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mAmountView.removeTextChangedListener(this);
+
+                if (mAmountView.getText().length() == 0 || mAmountView.getText().toString().charAt(0) != '$') {
+                    mAmountView.setText("$" + mAmountView.getText().toString());
+                    mAmountView.setSelection(mAmountView.length());
+                }
+
+                mAmountView.addTextChangedListener(this);
+            }
+        });
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                if (mAmountView.getText().toString().matches("[$]\\d*\\.\\d{2}"))
                     return "";
                 return null;
             }
         };
 
-        mAmount.setFilters(new InputFilter[] { filter });
+        mAmountView.setFilters(new InputFilter[]{filter});
 
         builder.setView(layout);
         builder.setCancelable(true);
@@ -174,7 +199,7 @@ public class SavingsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(SavingsActivity.this, QRCodeActivity.class);
-                intent.putExtra("data", mAmount.getText().toString());
+                intent.putExtra("data", mAmountView.getText().toString());
                 startActivity(intent);
             }
         });
