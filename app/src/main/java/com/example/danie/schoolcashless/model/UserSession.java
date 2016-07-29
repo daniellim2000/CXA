@@ -23,6 +23,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Created by shihern on 29/7/2016.
  */
@@ -31,7 +33,7 @@ public class UserSession {
      * The API endpoint
      */
     public static final String ENDPOINT = "https://pckt.makerforce.io/api";
-    private static UserSession userSession;
+    private static UserSession userSession = null;
     public static final String APIVER = "~1";
     private final String username;
     private final String password;
@@ -47,9 +49,9 @@ public class UserSession {
         this.username = username;
         this.password = password;
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(ENDPOINT + "/auth").openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(ENDPOINT + "/auth").openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
-            connection.setRequestProperty("Accept-Version", APIVER);
+            //connection.setRequestProperty("Accept-Version", APIVER);
             connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
             connection.connect();
             int status = connection.getResponseCode();
@@ -60,7 +62,7 @@ public class UserSession {
             } else {
                 throw new BadResponseException(status);
             }
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace(); // impossible
         }
     }

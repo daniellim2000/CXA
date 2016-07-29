@@ -137,13 +137,13 @@ public class LoginActivity extends AppCompatActivity {
                 UserSession.createInstance(mEmail, mPassword);
             } catch (BadResponseException e) {
                 e.printStackTrace();
-                //return R.string.error_misbehaving;
+                return 0;
             } catch (IOException e) {
                 e.printStackTrace();
-                //return R.string.error_connection;
+                return 1;
             } catch (BadAuthenticationException e) {
                 e.printStackTrace();
-                //return R.string.error_authenticate;
+                return 2;
             }
 
             return 200;

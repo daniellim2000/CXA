@@ -3,7 +3,7 @@
     package="com.example.danie.schoolcashless">
 
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -17,17 +17,19 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".ScannerActivity" />
-        <activity
-            android:name=".SavingsActivity"
-            android:label="@string/title_activity_savings"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ScannerActivity" />
+        <activity
+            android:name=".SavingsActivity"
+            android:label="@string/title_activity_savings"
+            android:theme="@style/AppTheme.NoActionBar">
+
         </activity>
         <activity android:name=".QRCodeActivity" />
         <activity android:name=".RegisterActivity"></activity>

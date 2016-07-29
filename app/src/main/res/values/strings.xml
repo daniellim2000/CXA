@@ -27,5 +27,8 @@
 
     <!-- Errors -->
     <string name="error_field_required">Field is required!</string>
+    <string name="error_misbehaving">100</string>
+    <string name="error_connection">101</string>
+    <string name="error_authenticate">102</string>
 
 </resources>
