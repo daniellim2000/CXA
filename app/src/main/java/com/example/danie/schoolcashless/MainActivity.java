@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SavingsFragment.OnFragmentInteractionListener {
 
     Fragment savingsFragment = SavingsFragment.newInstance();
-    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.container, savingsFragment).commit();
     }
 
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (id == R.id.nav_savings) {
             // Handle the camera action
             ft.replace(R.id.container, savingsFragment).commit();

@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/savings_view_title"
+            android:text="@string/savings_view_money_left"
             android:textSize="28sp" />
 
         <TextView
@@ -28,6 +28,12 @@
 
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/savings_list_heading"
+        android:textSize="20sp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_transactions"
