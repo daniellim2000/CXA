@@ -38,6 +38,7 @@ public class QRCodeActivity extends AppCompatActivity {
     JSONObject json;
     String id;
     CreateTransaction mCreateTask;
+    ScheduledExecutorService scheduler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,7 @@ public class QRCodeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 if(userSession.transactionScanned(id)) {
@@ -72,6 +73,13 @@ public class QRCodeActivity extends AppCompatActivity {
                 }
             }
         }, 0, 200, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        scheduler.shutdown();
     }
 
     private Bitmap generateQRCode(String data)throws WriterException {
