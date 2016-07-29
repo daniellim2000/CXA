@@ -110,7 +110,8 @@ public class SavingsActivity extends AppCompatActivity {
                 JSONObject json = jsonTransactions.getJSONObject(i);
                 String name = (String) json.get("from");
                 Number value = (Number) json.get("value");
-                Transaction t = new Transaction("", name, value.doubleValue());
+                String id = (String) json.get("_id");
+                Transaction t = new Transaction(id, name, value.doubleValue());
                 transactionList.add(t);
             }
         }
@@ -353,6 +354,63 @@ public class SavingsActivity extends AppCompatActivity {
             mTransactionsTask = null;
             showProgress(false);
         }
+    }
+
+    public class GetTransactionDetailsTask extends AsyncTask<Void, Void, Integer> {
+
+        private Transaction transaction;
+        private JSONObject json;
+
+        GetTransactionDetailsTask(Transaction transaction) {
+            this.transaction = transaction;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            try {
+                json = UserSession.getInstance().getTransactionDetails(transaction.getId());
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return 0;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return 2;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            mTransactionsTask = null;
+            showProgress(false);
+
+            if (success == 200) {
+                try {
+                    processTransactionDetails(transaction, json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionsTask = null;
+            showProgress(false);
+        }
+    }
+
+    private void processTransactionDetails(Transaction transaction, JSONObject json) throws JSONException {
+        Number completed = (Number) json.get("completed");
+        transaction.setUnixTime(completed.intValue());
     }
 
     private void showProgress(boolean show) {

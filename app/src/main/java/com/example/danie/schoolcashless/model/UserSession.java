@@ -243,7 +243,7 @@ public class UserSession {
      * @throws IOException
      * @throws JSONException
      */
-    public JSONObject getTransactionDetails(int id) throws BadResponseException, BadAuthenticationException, IOException, JSONException {
+    public JSONObject getTransactionDetails(String id) throws BadResponseException, BadAuthenticationException, IOException, JSONException {
         return new JSONObject(requestGet("/transactions/" + id));
     }
 
