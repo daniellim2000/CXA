@@ -102,18 +102,6 @@ public class SavingsActivity extends AppCompatActivity {
         mTask = new GetTransactionsTask();
         mTask.execute((Void) null);
 
-        mBalanceView = (TextView) findViewById(R.id.balance);
-        try {
-            mBalanceView.setText("$" + Double.toString(UserSession.getInstance().getBalance()));
-        } catch (BadResponseException e) {
-            e.printStackTrace();
-        } catch (BadAuthenticationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
@@ -122,7 +110,7 @@ public class SavingsActivity extends AppCompatActivity {
                 JSONObject json = jsonTransactions.getJSONObject(i);
                 String name = (String) json.get("from");
                 Number value = (Number) json.get("value");
-                Transaction t = new Transaction("", name, (Double) value);
+                Transaction t = new Transaction("", name, value.doubleValue());
                 transactionList.add(t);
             }
         }
@@ -298,7 +286,6 @@ public class SavingsActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
-                finish();
                 try {
                     getTransactions();
                 } catch (JSONException e) {

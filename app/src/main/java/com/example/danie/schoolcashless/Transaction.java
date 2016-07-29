@@ -58,10 +58,7 @@ public class Transaction {
     }
 
     public String retrieveDate() {
-        DateTime dt = new DateTime();
-        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-        String str = fmt.print(dt);
-        return str;
+        return "";
     }
 
     public String getFrom() {
