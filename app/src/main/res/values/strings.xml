@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">School Cashless</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- Login Activity -->
+    <string name="login_btn_username">Username</string>
+    <string name="login_btn_password">Password</string>
+    <string name="login_btn_login">Login</string>
+    <string name="login_btn_forgot">Forgot Password</string>
+</resources>
