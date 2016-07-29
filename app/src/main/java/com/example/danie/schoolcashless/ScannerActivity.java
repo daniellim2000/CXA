@@ -13,6 +13,8 @@ import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 public class ScannerActivity extends CaptureActivity {
 
     DecoratedBarcodeView scannerView;
@@ -26,6 +28,8 @@ public class ScannerActivity extends CaptureActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         scannerView.getLayoutParams().height = (int)(metrics.heightPixels * 0.7);
+
+        JodaTimeAndroid.init(this);
     }
 
     @Override

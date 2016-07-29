@@ -35,7 +35,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         Transaction transaction = list.get(position);
         DecimalFormat df = new DecimalFormat("#.00");
-        holder.mDate.setText(transaction.getDate());
+        holder.mDate.setText(transaction.retrieveDate());
         holder.mPrice.setText('$' + df.format(transaction.getPrice()));
         holder.mStore.setText("Albert");
         //holder.mStore.setText(transaction.retrieveStoreName());

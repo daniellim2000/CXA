@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,27 +20,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/register_form">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/register_username"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_text_username" />
+            android:layout_margin="16dp"
+            android:orientation="vertical">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/register_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/login_text_password" />
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/register_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_text_username" />
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/register_confirmpassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/login_text_confirmpassword" />
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/register_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_text_password" />
 
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/register_confirmpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_text_confirmpassword" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <android.support.v7.widget.ButtonBarLayout
@@ -53,6 +61,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/login_btn_register" />
+
     </android.support.v7.widget.ButtonBarLayout>
+
+    <com.victor.loading.rotate.RotateLoading
+        android:id="@+id/rotateloading"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        app:loading_color="@color/colorPrimaryDark"
+        app:loading_width="4dp" />
 
 </LinearLayout>

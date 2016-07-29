@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mUsernameView = (TextInputEditText) findViewById(R.id.login_username);
         mPasswordView = (TextInputEditText) findViewById(R.id.login_password);
-        mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         mLoginView = (Button) findViewById(R.id.login_btn_login);
         mRegisterView = (Button) findViewById(R.id.login_btn_register);
         mForgotView = (TextView) findViewById(R.id.login_btn_forgot);
