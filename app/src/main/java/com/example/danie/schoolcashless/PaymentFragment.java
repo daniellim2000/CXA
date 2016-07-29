@@ -108,6 +108,8 @@ public class PaymentFragment extends Fragment {
         void onPaymentFragmentInteraction(Uri uri);
     }
 
+    
+
     private void createTransaction() {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 getContext());
