@@ -23,6 +23,7 @@ import org.json.JSONObject;
 public class QRCodeActivity extends AppCompatActivity {
 
     ImageView imageView;
+    UserSession userSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class QRCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qrcode);
 
         imageView = (ImageView)findViewById(R.id.qrcode);
+        userSession = UserSession.getInstance();
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -43,9 +45,9 @@ public class QRCodeActivity extends AppCompatActivity {
 
         try {
             if(isCharge) {
-                json = UserSession.getInstance().createSendTransaction(value);
+                json = userSession.createSendTransaction(value);
             } else {
-                json = UserSession.getInstance().createReceiveTransaction(value);
+                json = userSession.createReceiveTransaction(value);
             }
         } catch(Exception e) {
             e.printStackTrace();
