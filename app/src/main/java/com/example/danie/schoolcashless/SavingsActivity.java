@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +29,6 @@ import com.example.danie.schoolcashless.model.exception.BadAuthenticationExcepti
 import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.google.zxing.qrcode.encoder.QRCode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,11 +36,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class SavingsActivity extends AppCompatActivity {
 
@@ -51,8 +46,10 @@ public class SavingsActivity extends AppCompatActivity {
     private TransactionAdapter transactionAdapter;
     private TextView mBalanceView;
 
-    private GetTransactionsTask mTask;
+    private GetTransactionsTask mTransactionsTask;
+    private GetBalanceTask mBalanceTask;
     private JSONArray jsonTransactions;
+    private double mBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +96,12 @@ public class SavingsActivity extends AppCompatActivity {
             }
         }));
 
-        mTask = new GetTransactionsTask();
-        mTask.execute((Void) null);
+        mTransactionsTask = new GetTransactionsTask();
+        mTransactionsTask.execute((Void) null);
 
+        mBalanceView = (TextView) findViewById(R.id.balance);
+        mBalanceTask = new GetBalanceTask();
+        mBalanceTask.execute((Void) null);
     }
 
     private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
@@ -282,7 +282,7 @@ public class SavingsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Integer success) {
-            mTask = null;
+            mTransactionsTask = null;
             showProgress(false);
 
             if (success == 200) {
@@ -304,7 +304,53 @@ public class SavingsActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
-            mTask = null;
+            mTransactionsTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class GetBalanceTask extends AsyncTask<Void, Void, Integer> {
+
+        GetBalanceTask() {
+
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+            try {
+                mBalance = UserSession.getInstance().getBalance();
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return 0;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return 2;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            mTransactionsTask = null;
+            showProgress(false);
+
+            if (success == 200) {
+                mBalanceView.setText("$" + mBalance);
+            } else {
+                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionsTask = null;
             showProgress(false);
         }
     }

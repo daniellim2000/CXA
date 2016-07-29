@@ -28,12 +28,12 @@
             android:textSize="28sp" />
 
         <TextView
+            android:id="@+id/balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="8dp"
             android:text="$0"
-            android:id="@+id/balance"
             android:textSize="24sp" />
 
 
@@ -53,7 +53,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_transactions"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
 </LinearLayout>
