@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    TextInputEditText mEmailView, mPasswordView, mConfirmPasswordView;
+    TextInputEditText mEmailView, mPasswordView, mConfirmPasswordView, mNameView;
     Button mRegisterView;
     RotateLoading mRotateLoadingView;
     View mRegisterFormView;
@@ -36,8 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailView = (TextInputEditText) findViewById(R.id.register_username);
         mPasswordView = (TextInputEditText) findViewById(R.id.register_password);
         mConfirmPasswordView = (TextInputEditText) findViewById(R.id.register_confirmpassword);
-        mPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        mConfirmPasswordView.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        mNameView = (TextInputEditText) findViewById(R.id.register_name);
         mRegisterView = (Button) findViewById(R.id.register_btn_register);
         mRotateLoadingView = (RotateLoading) findViewById(R.id.rotateloading);
         mRegisterFormView = findViewById(R.id.register_form);
@@ -68,6 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
+        String name = mNameView.getText().toString();
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         String confirmpassword = mConfirmPasswordView.getText().toString();
@@ -83,6 +83,11 @@ public class RegisterActivity extends AppCompatActivity {
         }*/
 
         // Check for a valid email address.
+        if (name.length() == 0) {
+            mNameView.setError(getString(R.string.error_field_required));
+            focusView = mNameView;
+            cancel = true;
+        }
         if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -107,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserRegisterTask(email, password, confirmpassword);
+            mAuthTask = new UserRegisterTask(name, email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -116,19 +121,19 @@ public class RegisterActivity extends AppCompatActivity {
 
         private final String mEmail;
         private final String mPassword;
-        private final String mConfirmPassword;
+        private final String mName;
 
-        UserRegisterTask(String email, String password, String confirmPassword) {
+        UserRegisterTask(String name, String email, String password) {
             mEmail = email;
             mPassword = password;
-            mConfirmPassword = confirmPassword;
+            mName = name;
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
 
             try {
-                UserSession.createUser(mEmail, mPassword, mConfirmPassword);
+                UserSession.createUser(mName, mEmail, mPassword);
             } catch (BadResponseException e) {
                 e.printStackTrace();
                 return R.string.error_misbehaving;
@@ -153,7 +158,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Intent intent = new Intent(RegisterActivity.this, SavingsActivity.class);
                 RegisterActivity.this.startActivity(intent);
             } else {
-                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), success, Toast.LENGTH_SHORT).show();
             }
         }
 

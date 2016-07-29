@@ -8,6 +8,7 @@
 
     <!-- Login Activity -->
     <string name="login_text_username">Email</string>
+    <string name="login_text_name">Name</string>
     <string name="login_text_password">Password</string>
     <string name="login_text_confirmpassword">Confirm password</string>
     <string name="login_btn_login">Login</string>
@@ -29,8 +30,8 @@
     <string name="error_field_required">Field is required!</string>
     <string name="error_field_password_short">Password is too short!</string>
     <string name="error_field_password_mismatch">Passwords do not match!</string>
-    <string name="error_misbehaving">100</string>
-    <string name="error_connection">101</string>
-    <string name="error_authenticate">102</string>
+    <string name="error_misbehaving">hhhhuj</string>
+    <string name="error_connection">hnjm</string>
+    <string name="error_authenticate">fgbh</string>
 
 </resources>
