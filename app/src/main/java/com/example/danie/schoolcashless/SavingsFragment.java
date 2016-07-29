@@ -4,9 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -20,6 +26,10 @@ import android.view.ViewGroup;
 public class SavingsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
+    private RecyclerView mRecyclerView;
+    private List<Transaction> transactionList;
+    private TransactionAdapter transactionAdapter;
+
     public SavingsFragment() {
         // Required empty public constructor
     }
@@ -27,6 +37,7 @@ public class SavingsFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment SavingsFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -48,13 +59,27 @@ public class SavingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_savings, container, false);
+        View layout = inflater.inflate(R.layout.fragment_savings, container, false);
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.list_transactions);
+        transactionList = new ArrayList<Transaction>();
+        transactionList.add(new Transaction("29 June", "Noodle Food", 300.00));
+        transactionList.add(new Transaction("30 June", "Waffle Store", 300.00));
+
+        transactionAdapter = new TransactionAdapter(transactionList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+        mRecyclerView.setAdapter(transactionAdapter);
+
+        return layout;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onSavingsFragmentInteraction(uri);
         }
     }
 
@@ -87,6 +112,6 @@ public class SavingsFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onSavingsFragmentInteraction(Uri uri);
     }
 }
