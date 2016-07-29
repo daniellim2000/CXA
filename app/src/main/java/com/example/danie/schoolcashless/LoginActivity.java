@@ -32,6 +32,9 @@ public class LoginActivity extends AppCompatActivity {
 
         mUsername = (TextInputEditText) findViewById(R.id.login_username);
         mPassword = (TextInputEditText) findViewById(R.id.login_password);
+        mPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        mLogin = (Button) findViewById(R.id.login_btn_login);
+        mLogin.setClickable(false);
         mUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -41,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (mUsername.getText().toString().length() > 0 && mPassword.getText().toString().length() > 0) {
-                    mLogin.setTextColor(getResources().getColor(R.color.colorAccent));
+                    mLogin.setClickable(true);
                 }
             }
 
@@ -59,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (mUsername.getText().toString().length() > 0 && mPassword.getText().toString().length() > 0) {
-                    mLogin.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    mLogin.setClickable(true);
                 }
             }
 
@@ -68,15 +71,14 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-        mPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        mLogin = (Button) findViewById(R.id.login_btn_login);
         mRegister = (Button) findViewById(R.id.login_btn_register);
         mForgot = (TextView) findViewById(R.id.login_btn_forgot);
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login();
+                if (mUsername.getText().toString().length() > 0 && mPassword.getText().toString().length() > 0)
+                    login();
             }
         });
 

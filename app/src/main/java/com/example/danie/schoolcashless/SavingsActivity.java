@@ -14,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -154,23 +156,19 @@ public class SavingsActivity extends AppCompatActivity {
         View layout = getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
 
         final TextInputEditText mAmount = (TextInputEditText) layout.findViewById(R.id.dialog_payment_amount);
-        mAmount.addTextChangedListener(new TextWatcher() {
+
+        InputFilter filter = new InputFilter()
+        {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if(mAmount.getText().length() == 0)
-                    mAmount.setText("$");
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
+            {
+                if(mAmount.getText().toString().matches("[0-9]*.[0-9]{2}"))
+                    return "";
+                return null;
             }
+        };
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mAmount.setFilters(new InputFilter[] { filter });
 
         builder.setView(layout);
         builder.setCancelable(true);

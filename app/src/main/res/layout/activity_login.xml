@@ -35,11 +35,11 @@
             android:hint="@string/login_text_password" />
 
         <TextView
+            android:id="@+id/login_btn_forgot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/login_btn_forgot"
-            android:id="@+id/login_btn_forgot"
             android:textSize="14sp" />
 
     </LinearLayout>
@@ -51,16 +51,18 @@
 
         <Button
             android:id="@+id/login_btn_register"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login_btn_register"
-            android:textColor="@color/colorPrimary" />
+            android:text="@string/login_btn_register" />
 
         <Button
             android:id="@+id/login_btn_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login_btn_login" />
+            android:clickable="false"
+            android:text="@string/login_btn_login"
+            style="@style/Widget.AppCompat.Button.Colored"/>
     </android.support.v7.widget.ButtonBarLayout>
 
 </LinearLayout>
