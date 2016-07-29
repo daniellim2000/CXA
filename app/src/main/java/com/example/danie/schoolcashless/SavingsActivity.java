@@ -106,35 +106,35 @@ public class SavingsActivity extends AppCompatActivity {
             }
         }));
 
-        mBalanceView = (TextView) findViewById(R.id.balance);
-        try {
-            mBalanceView.setText("$" + Double.toString(UserSession.getInstance().getBalance()));
-        } catch (BadResponseException e) {
-            e.printStackTrace();
-        } catch (BadAuthenticationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        mBalanceView = (TextView) findViewById(R.id.balance);
+//        try {
+//            mBalanceView.setText("$" + Double.toString(UserSession.getInstance().getBalance()));
+//        } catch (BadResponseException e) {
+//            e.printStackTrace();
+//        } catch (BadAuthenticationException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
-        JSONArray jsonArray = null;
-        jsonArray = UserSession.getInstance().getTransactions(0, 100);
-
-        if (jsonArray != null) {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject json = jsonArray.getJSONObject(i);
-                String name = (String) json.get("from");
-                Number value = (Number) json.get("value");
-                Transaction t = new Transaction("", name, (Double) value);
-                transactionList.add(t);
-            }
-        }
-
-        transactionAdapter.notifyDataSetChanged();
+//        JSONArray jsonArray = null;
+//        jsonArray = UserSession.getInstance().getTransactions(0, 100);
+//
+//        if (jsonArray != null) {
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject json = jsonArray.getJSONObject(i);
+//                String name = (String) json.get("from");
+//                Number value = (Number) json.get("value");
+//                Transaction t = new Transaction("", name, (Double) value);
+//                transactionList.add(t);
+//            }
+//        }
+//
+//        transactionAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -206,8 +206,8 @@ public class SavingsActivity extends AppCompatActivity {
         View layout = getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
 
         final TextInputEditText mAmountView = (TextInputEditText) layout.findViewById(R.id.dialog_payment_amount);
-        final RadioButton mChargeButton = (RadioButton) findViewById(R.id.dialog_charge);
-        final RadioButton mCreditButton = (RadioButton) findViewById(R.id.dialog_credit);
+        final RadioButton mChargeButton = (RadioButton) layout.findViewById(R.id.dialog_charge);
+        final RadioButton mCreditButton = (RadioButton) layout.findViewById(R.id.dialog_credit);
 
         mAmountView.addTextChangedListener(new TextWatcher() {
             DecimalFormat dec = new DecimalFormat("0.00");
@@ -251,7 +251,7 @@ public class SavingsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(SavingsActivity.this, QRCodeActivity.class);
-                intent.putExtra("value", mAmountView.getText().toString());
+                intent.putExtra("value", mAmountView.getText().toString().substring(1));
 
                 if (mChargeButton.isChecked()) {
                     intent.putExtra("isCharge", true);
