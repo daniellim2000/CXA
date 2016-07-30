@@ -1,23 +1,44 @@
 package com.example.danie.schoolcashless;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Movie;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.danie.schoolcashless.model.UserSession;
+import com.example.danie.schoolcashless.model.exception.BadAuthenticationException;
+import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +57,12 @@ public class SavingsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private List<Transaction> transactionList;
     private TransactionAdapter transactionAdapter;
+    private TextView mBalanceView;
+
+    private GetTransactionsTask mTransactionsTask;
+    private GetBalanceTask mBalanceTask;
+    private JSONArray jsonTransactions;
+    private double mBalance;
 
     public SavingsFragment() {
         // Required empty public constructor
@@ -70,6 +97,8 @@ public class SavingsFragment extends Fragment {
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.list_transactions);
         transactionList = new ArrayList<Transaction>();
 
+        mBalanceView = (TextView) layout.findViewById(R.id.balance);
+
         transactionAdapter = new TransactionAdapter(transactionList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -92,11 +121,16 @@ public class SavingsFragment extends Fragment {
         return layout;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onSavingsFragmentInteraction(uri);
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mTransactionsTask = new GetTransactionsTask();
+        mTransactionsTask.execute((Void) null);
+
+        mBalanceView = (TextView) getView().findViewById(R.id.balance);
+        mBalanceTask = new GetBalanceTask();
+        mBalanceTask.execute((Void) null);
     }
 
     @Override
@@ -131,6 +165,21 @@ public class SavingsFragment extends Fragment {
         void onSavingsFragmentInteraction(Uri uri);
     }
 
+    private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
+        transactionList.removeAll(transactionList);
+        if (jsonTransactions != null) {
+            for (int i = 0; i < jsonTransactions.length(); i++) {
+                JSONObject json = jsonTransactions.getJSONObject(i);
+                Number value = (Number) json.get("value");
+                String id = (String) json.get("_id");
+                Transaction t = new Transaction(id, value.doubleValue());
+                transactionList.add(t);
+            }
+        }
+
+        transactionAdapter.notifyDataSetChanged();
+    }
+
     public interface ClickListener {
         void onClick(View view, int position);
 
@@ -140,9 +189,9 @@ public class SavingsFragment extends Fragment {
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
         private GestureDetector gestureDetector;
-        private SavingsFragment.ClickListener clickListener;
+        private ClickListener clickListener;
 
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final SavingsFragment.ClickListener clickListener) {
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
             this.clickListener = clickListener;
             gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
@@ -178,6 +227,162 @@ public class SavingsFragment extends Fragment {
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
         }
+    }
+
+    public class GetTransactionsTask extends AsyncTask<Void, Void, Integer> {
+
+        GetTransactionsTask() {
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+            try {
+                jsonTransactions = UserSession.getInstance().getTransactions(0, 100);
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return R.string.error_misbehaving;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return R.string.error_connection;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return R.string.error_authenticate;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return R.string.error_misbehaving;
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            if (success == 200) {
+                try {
+                    getTransactions();
+                } catch (JSONException | BadResponseException | IOException | BadAuthenticationException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Snackbar.make(getActivity().findViewById(R.id.fab), success, Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mTransactionsTask.execute();
+                    }
+                }).show();
+            }
+        }
+
+    }
+
+    public class GetBalanceTask extends AsyncTask<Void, Void, Integer> {
+
+        private double mBalance;
+
+        GetBalanceTask() {
+
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+            try {
+                mBalance = UserSession.getInstance().getBalance();
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return R.string.error_misbehaving;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return R.string.error_connection;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return R.string.error_authenticate;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            if (success == 200) {
+                DecimalFormat df = new DecimalFormat("#.##");
+                mBalanceView.setText("$" + df.format(mBalance));
+            } else {
+                Snackbar.make(getActivity().findViewById(R.id.fab), success, Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBalanceTask.execute();
+                    }
+                }).show();
+            }
+        }
+
+    }
+
+    public class GetTransactionDetailsTask extends AsyncTask<Void, Void, Integer> {
+
+        private Transaction transaction;
+        private JSONObject json;
+
+        GetTransactionDetailsTask(Transaction transaction) {
+            this.transaction = transaction;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            try {
+                json = UserSession.getInstance().getTransactionDetails(transaction.getId());
+            } catch (BadResponseException e) {
+                e.printStackTrace();
+                return R.string.error_misbehaving;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return R.string.error_connection;
+            } catch (BadAuthenticationException e) {
+                e.printStackTrace();
+                return R.string.error_authenticate;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return 200;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+            mTransactionsTask = null;
+
+            if (success == 200) {
+                try {
+                    processTransactionDetails(transaction, json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Snackbar.make(getActivity().findViewById(R.id.fab), success, Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBalanceTask.execute();
+                    }
+                }).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionsTask = null;
+        }
+    }
+
+    private void processTransactionDetails(Transaction transaction, JSONObject json) throws JSONException {
+        Number completed = (Number) json.get("completed");
+        transaction.setUnixTime(completed.intValue());
+        JSONObject with = (JSONObject) json.get("with");
+        String name = (String) with.get("name");
+        transaction.setWith(name);
     }
 
 }
