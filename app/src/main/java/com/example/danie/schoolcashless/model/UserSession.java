@@ -341,10 +341,10 @@ public class UserSession {
      * @param id The id of the transaction
      * @return True if confirmfrom successfully updated, false if not
      */
-    public Boolean transactionConfirmFrom(String id) {
+    public Boolean transactionConfirmFrom(String id, Boolean bool) {
         try {
             JSONObject json = new JSONObject();
-            json.put("confirmfrom", true);
+            json.put("confirmfrom", bool);
             requestPut("/transactions/" + id, json);
         } catch (Exception e) {
             e.printStackTrace();
@@ -360,10 +360,10 @@ public class UserSession {
      * @param id The id of the transaction
      * @return True if confirmto successfully updated, false if not
      */
-    public Boolean transactionConfirmTo(String id) {
+    public Boolean transactionConfirmTo(String id, Boolean bool) {
         try {
             JSONObject json = new JSONObject();
-            json.put("confirmto", true);
+            json.put("confirmto", bool);
             requestPut("/transactions/" + id, json);
         } catch (Exception e) {
             e.printStackTrace();
