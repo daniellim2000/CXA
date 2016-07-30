@@ -300,6 +300,7 @@ public class UserSession {
             JSONObject response = new JSONObject(requestGet("/transactions/" + id + "/confirmedfrom"));
             return response.getBoolean("status");
         } catch(Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -318,6 +319,7 @@ public class UserSession {
             JSONObject response = new JSONObject(requestGet("/transactions/" + id + "/confirmedto"));
             return response.getBoolean("status");
         } catch(Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
