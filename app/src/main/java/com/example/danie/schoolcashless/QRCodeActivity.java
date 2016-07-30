@@ -48,6 +48,7 @@ public class QRCodeActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         double value = Double.parseDouble(extras.getString("value"));
+        Log.d("hi", String.valueOf(value));
         Boolean isCharge = extras.getBoolean("isCharge");
 
         mCreateTask = new CreateTransaction(isCharge, value);

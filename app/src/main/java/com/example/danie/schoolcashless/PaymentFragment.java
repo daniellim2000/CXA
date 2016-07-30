@@ -2,16 +2,40 @@ package com.example.danie.schoolcashless;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.danie.schoolcashless.model.UserSession;
+import com.example.danie.schoolcashless.model.exception.BadAuthenticationException;
+import com.example.danie.schoolcashless.model.exception.BadResponseException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,9 +50,9 @@ public class PaymentFragment extends Fragment {
     public static final String RECIEVE = "recieve";
     public static final String SEND = "send";
 
-    private OnFragmentInteractionListener mListener;
-
     private String type = "recieve";
+    private OnFragmentInteractionListener mListener;
+    private TextView amount;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -62,7 +86,27 @@ public class PaymentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_payment, container, false);
-        ((TextView) layout.findViewById(R.id.mm)).setText(type);
+        //((TextView) layout.findViewById(R.id.mm)).setText(type);
+
+        Button btn = (Button) layout.findViewById(R.id.button);
+        amount = (TextView) layout.findViewById(R.id.amount);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), QRCodeActivity.class);
+                intent.putExtra("value", amount.getText().toString());
+
+                if (type != SEND) {
+                    intent.putExtra("isCharge", true);
+                } else {
+                    intent.putExtra("isCharge", false);
+                }
+
+                startActivity(intent);
+            }
+        });
+
         return layout;
     }
 
@@ -78,9 +122,9 @@ public class PaymentFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onResume() {
+        super.onResume();
+        amount.setText("");
     }
 
     /**
@@ -96,42 +140,6 @@ public class PaymentFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onPaymentFragmentInteraction(Uri uri);
-    }
-
-    
-
-    private void createTransaction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                getContext());
-
-        // set title
-        builder.setTitle("Create Transaction");
-        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
-        builder.setView(dialogView);
-        // set dialog message
-        builder
-                .setCancelable(true)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, just close
-                        // the dialog box and do nothing
-                        dialog.cancel();
-                    }
-                });
-
-        // create alert dialog
-        AlertDialog alertDialog = builder.create();
-
-        // show it
-        alertDialog.show();
-    }
-
-    private void generateQRCode() {
-
     }
 
 }

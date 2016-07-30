@@ -2,10 +2,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.danie.schoolcashless.PaymentFragment">
+    tools:context="com.example.danie.schoolcashless.PaymentFragment"
+    android:padding="24dp">
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mm"/>
+        android:text="Pay someone"
+        android:id="@+id/textView3"
+        android:layout_alignLeft="@+id/linearLayout"
+        android:layout_above="@+id/linearLayout" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:text="$"
+            android:id="@+id/textView5"
+            android:layout_toLeftOf="@+id/editText"
+            android:layout_centerInParent="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:id="@+id/amount"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:hint="0.00"
+            android:layout_centerInParent="true"
+            android:maxLength="5" />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="send"
+        android:id="@+id/button"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignRight="@+id/linearLayout" />
+
 </RelativeLayout>

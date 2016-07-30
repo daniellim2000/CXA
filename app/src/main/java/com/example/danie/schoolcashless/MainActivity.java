@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(MainActivity.this, QRCodeActivity.class);
-                intent.putExtra("value", mAmountView.getText().toString().substring(1));
+                intent.putExtra("value", mAmountView.getText().toString());
 
                 if (mChargeButton.isChecked()) {
                     intent.putExtra("isCharge", true);

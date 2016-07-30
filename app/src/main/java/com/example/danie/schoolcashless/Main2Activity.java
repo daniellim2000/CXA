@@ -1,7 +1,9 @@
 package com.example.danie.schoolcashless;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,11 +28,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.danie.schoolcashless.model.UserSession;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class Main2Activity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PaymentFragment.OnFragmentInteractionListener, SavingsFragment.OnFragmentInteractionListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private TransactionScanned mTransactionScanned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +58,8 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        toolbar.setTitle("Pckt");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +77,7 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(0);
     }
 
 
@@ -95,9 +106,9 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -112,39 +123,13 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main2, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
+    private void logout() {
+        SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
+        editor.putString("email", "");
+        editor.putString("password", "");
+        editor.commit();
+        Intent intent = new Intent(Main2Activity.this, LoginActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -200,16 +185,65 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         int id = item.getItemId();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (id == R.id.nav_savings) {
-            // Handle the camera action
-            //ft.replace(R.id.container, savingsFragment).commit();
+
+        } else if (id == R.id.nav_settings) {
+
+        } else if (id == R.id.nav_logout) {
+            logout();
         }
-//        else if (id == R.id.nav_payment) {
-//            //ft.replace(R.id.container, paymentFragment).commit();
-//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                String id = result.getContents();
+                mTransactionScanned = new TransactionScanned(id);
+                mTransactionScanned.execute((Void) null);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public class TransactionScanned extends AsyncTask<Void, Void, Boolean> {
+
+        private final String id;
+
+        TransactionScanned(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return UserSession.getInstance().putTransactionScanned(id);
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mTransactionScanned = null;
+            if (success) {
+                Intent intent = new Intent(Main2Activity.this, ConfirmationActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getApplicationContext(), "Error communicating with server", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionScanned = null;
+        }
+    }
+    
 }
