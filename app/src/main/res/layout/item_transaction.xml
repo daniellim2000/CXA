@@ -18,13 +18,16 @@
             android:id="@+id/transaction_title"
             android:textSize="16sp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:id="@+id/transaction_date"
+            android:text="Date"
+            android:textSize="14sp" />
+
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/transaction_price"
-        android:text="Price"
-        android:textSize="14sp" />
+
 
 </LinearLayout>
