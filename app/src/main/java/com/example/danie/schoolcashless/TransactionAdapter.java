@@ -35,10 +35,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         Transaction transaction = list.get(position);
         DecimalFormat df = new DecimalFormat("#.00");
-        holder.mDate.setText(transaction.retrieveDate());
-        holder.mPrice.setText('$' + df.format(transaction.getPrice()));
-        holder.mStore.setText("Albert");
+        holder.mDateView.setText(transaction.retrieveDate());
+        String type = "Paid";
+        holder.mTitleView.setText(format(transaction.isPaid(), transaction.getPrice()) + transaction.getWith());
         //holder.mStore.setText(transaction.retrieveStoreName());
+    }
+
+    private String format(boolean paid, double value) {
+        if (paid) {
+            return "Paid $" + value + " to ";
+        } else {
+            return "Received $" + value + " from";
+        }
     }
 
     @Override
@@ -47,13 +55,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView mDate, mStore, mPrice;
+        TextView mDateView, mTitleView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mStore = (TextView) itemView.findViewById(R.id.transaction_store);
-            mDate = (TextView) itemView.findViewById(R.id.transaction_date);
-            mPrice = (TextView) itemView.findViewById(R.id.transaction_price);
+            mTitleView = (TextView) itemView.findViewById(R.id.transaction_title);
+            mDateView = (TextView) itemView.findViewById(R.id.transaction_date);
         }
     }
 }
