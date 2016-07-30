@@ -57,6 +57,11 @@ public class ConfirmationActivity extends AppCompatActivity {
 
         GetTransaction getTransaction = new GetTransaction(id);
         getTransaction.execute((Void)null);
+        try {
+            getTransaction.wait();
+        } catch(InterruptedException e) {
+
+        }
 
         if(uChargeOtherGuy) {
             confirmReceive.setVisibility(View.VISIBLE);
@@ -154,6 +159,8 @@ public class ConfirmationActivity extends AppCompatActivity {
 
                 } catch(JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    notifyAll();
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error processing transaction data", Toast.LENGTH_LONG).show();

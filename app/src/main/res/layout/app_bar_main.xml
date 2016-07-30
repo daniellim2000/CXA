@@ -21,6 +21,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <include layout="@layout/content_savings" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_receive"
@@ -28,7 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_scan_24dp" />
+        android:src="@drawable/ic_scan_24dp"
+        android:clickable="true"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_send"
@@ -44,8 +46,9 @@
         android:src="@drawable/ic_money_24dp"
         app:layout_anchor="@id/fab_receive"
         app:layout_anchorGravity="top"
-        app:backgroundTint="#ffffff"/>
+        app:backgroundTint="#ffffff"
+        android:clickable="true"/>
 
-    <include layout="@layout/content_savings" />
+
 
 </android.support.design.widget.CoordinatorLayout>
