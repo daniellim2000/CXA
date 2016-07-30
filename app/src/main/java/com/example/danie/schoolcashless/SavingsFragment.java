@@ -381,7 +381,7 @@ public class SavingsFragment extends Fragment {
         Number completed = (Number) json.get("completed");
         transaction.setUnixTime(completed.intValue());
         JSONObject with = (JSONObject) json.get("with");
-        String name = (String) with.get("name");
+        String name = with.getString("name");
         transaction.setWith(name);
     }
 
