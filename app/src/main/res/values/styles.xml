@@ -15,6 +15,7 @@
 
     <style name="AppTheme.NoActionBar.Meowify" parent="AppTheme.NoActionBar">
         <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
         <item name="colorAccent">#fff</item>
         <item name="android:colorForeground">#fff</item>
         <item name="android:textColorPrimary">#fff</item>
