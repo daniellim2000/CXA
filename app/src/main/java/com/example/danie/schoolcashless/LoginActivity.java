@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("password", password);
                 editor.commit();
                 finish();
-                Intent intent = new Intent(LoginActivity.this, SavingsActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 LoginActivity.this.startActivity(intent);
             } else {
                 Snackbar.make(findViewById(R.id.parent), success, Snackbar.LENGTH_SHORT).show();

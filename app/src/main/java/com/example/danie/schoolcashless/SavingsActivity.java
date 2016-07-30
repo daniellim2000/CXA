@@ -326,7 +326,6 @@ public class SavingsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Integer success) {
             mTransactionsTask = null;
-            showProgress(false);
 
             if (success == 200) {
                 try {
@@ -348,7 +347,6 @@ public class SavingsActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             mTransactionsTask = null;
-            showProgress(false);
         }
     }
 
@@ -382,7 +380,6 @@ public class SavingsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Integer success) {
             mTransactionsTask = null;
-            showProgress(false);
 
             if (success == 200) {
                 DecimalFormat df = new DecimalFormat("#.##");
@@ -395,7 +392,6 @@ public class SavingsActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             mTransactionsTask = null;
-            showProgress(false);
         }
     }
 
@@ -431,7 +427,6 @@ public class SavingsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Integer success) {
             mTransactionsTask = null;
-            showProgress(false);
 
             if (success == 200) {
                 try {
@@ -447,7 +442,6 @@ public class SavingsActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             mTransactionsTask = null;
-            showProgress(false);
         }
     }
 
@@ -457,10 +451,6 @@ public class SavingsActivity extends AppCompatActivity {
         JSONObject with = (JSONObject) json.get("with");
         String name = (String) with.get("name");
         transaction.setWith(name);
-    }
-
-    private void showProgress(boolean show) {
-
     }
 
 }
