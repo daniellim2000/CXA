@@ -3,6 +3,7 @@ package com.example.danie.schoolcashless;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,11 +20,14 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfirmationActivity extends AppCompatActivity {
 
-    private String id;
-    private String otherPerson;
-    private Boolean uChargeOtherGuy;
-    private Boolean uAreFrom;
-    private double value;
+    String id;
+    String otherPerson;
+    Boolean youChargeOtherGuy;
+    Boolean uAreFrom;
+    double value;
+    int intValue;
+
+    GetTransaction mGetTransaction;
 
     UserSession userSession;
 
@@ -55,56 +59,103 @@ public class ConfirmationActivity extends AppCompatActivity {
 
         id = getIntent().getStringExtra("id");
 
-        GetTransaction getTransaction = new GetTransaction(id);
-        getTransaction.execute((Void)null);
-
-        if(uChargeOtherGuy) {
-            confirmReceive.setVisibility(View.VISIBLE);
-            confirmFrom.setVisibility(View.VISIBLE);
-        } else {
-            confirmPay.setVisibility(View.VISIBLE);
-            confirmTo.setVisibility(View.VISIBLE);
-        }
-
-        confirmValue.setText(String.valueOf(value));
-        confirmPerson.setText(otherPerson);
-
         btnDecline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                userSession.transactionConfirmTo(id, false);
                 finish();
             }
         });
 
+        mGetTransaction = new GetTransaction(id);
+        mGetTransaction.execute();
 
-        if(uAreFrom) {
-            userSession.transactionConfirmFrom(id);
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate(new Runnable() {
-                public void run() {
-                    if(userSession.transactionConfirmedTo(id)) {
-                        Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                }
-            }, 0, 200, TimeUnit.MILLISECONDS);
-
-        } else {
-            userSession.transactionConfirmTo(id);
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate(new Runnable() {
-                public void run() {
-                    if(userSession.transactionConfirmedFrom(id)) {
-                        Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                }
-            }, 0, 200, TimeUnit.MILLISECONDS);
-
-        }
 
     }
 
+
+    private void initialize(JSONObject success) {
+        try {
+            Log.d("Json", success.toString());
+
+            JSONObject otherUser = success.getJSONObject("with");
+            otherPerson = otherUser.getString("name");
+
+            try {
+                value = (double)success.get("value");
+            } catch(ClassCastException e) {
+                value = (int)success.get("value");
+            }
+
+            JSONObject fromUser = success.getJSONObject("from");
+            String fromName = fromUser.getString("name");
+            JSONObject toUser = success.getJSONObject("to");
+            String toName = toUser.getString("name");
+
+            if (fromName.equalsIgnoreCase(otherPerson)) { //other initiated transaction
+                confirmPerson.setText(fromName);
+                uAreFrom = false;
+                if (value < 0) { //other paying u
+                    youChargeOtherGuy = true;
+                } else { //u paying other
+                    youChargeOtherGuy = false;
+                }
+            } else { //u initiated transaction
+                confirmPerson.setText(toName);
+                uAreFrom = true;
+                if (value > 0) {
+                    youChargeOtherGuy = true;
+                } else {
+                    youChargeOtherGuy = false;
+                }
+            }
+
+            if (youChargeOtherGuy) {
+                confirmReceive.setVisibility(View.VISIBLE);
+                confirmFrom.setVisibility(View.VISIBLE);
+            } else {
+                confirmPay.setVisibility(View.VISIBLE);
+                confirmTo.setVisibility(View.VISIBLE);
+            }
+
+            confirmValue.setText(String.valueOf(Math.abs(value)));
+
+            btnAccept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    btnAccept.setEnabled(false);
+
+                    if (uAreFrom) {
+                        userSession.transactionConfirmFrom(id, true);
+                        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+                        scheduler.scheduleAtFixedRate(new Runnable() {
+                            public void run() {
+                                if (userSession.transactionConfirmedTo(id)) {
+                                    Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            }
+                        }, 0, 200, TimeUnit.MILLISECONDS);
+
+                    } else {
+                        userSession.transactionConfirmTo(id, true);
+                        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+                        scheduler.scheduleAtFixedRate(new Runnable() {
+                            public void run() {
+                                if (userSession.transactionConfirmedFrom(id)) {
+                                    Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            }
+                        }, 0, 200, TimeUnit.MILLISECONDS);
+
+                    }
+                }
+            });
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public class GetTransaction extends AsyncTask<Void, Void, JSONObject> {
 
@@ -128,33 +179,9 @@ public class ConfirmationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final JSONObject success) {
+            mGetTransaction = null;
             if (success != null) {
-                try {
-                    JSONObject otherUser = (JSONObject)success.get("with");
-                    otherPerson = otherUser.getString("name");
-                    value = (double)success.get("value");
-
-                    JSONObject fromUser = (JSONObject)success.get("from");
-                    String fromName = fromUser.getString("name");
-                    if(fromName.equalsIgnoreCase(otherPerson)) { //other initiated transaction
-                        uAreFrom = false;
-                        if(value < 0) { //other paying u
-                            uChargeOtherGuy = true;
-                        } else { //u paying other
-                            uChargeOtherGuy = false;
-                        }
-                    } else { //u initiated transaction
-                        uAreFrom = true;
-                        if(value > 0) {
-                            uChargeOtherGuy = true;
-                        } else {
-                            uChargeOtherGuy = false;
-                        }
-                    }
-
-                } catch(JSONException e) {
-                    e.printStackTrace();
-                }
+                initialize(success);
             } else {
                 Toast.makeText(getApplicationContext(), "Error processing transaction data", Toast.LENGTH_LONG).show();
             }
@@ -162,7 +189,7 @@ public class ConfirmationActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
-
+            mGetTransaction = null;
         }
     }
 }
