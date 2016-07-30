@@ -81,11 +81,7 @@ public class ConfirmationActivity extends AppCompatActivity {
             JSONObject otherUser = success.getJSONObject("with");
             otherPerson = otherUser.getString("name");
 
-            try {
-                value = (double)success.get("value");
-            } catch(ClassCastException e) {
-                value = (int)success.get("value");
-            }
+            value = success.getDouble("value");
 
             JSONObject fromUser = success.getJSONObject("from");
             String fromName = fromUser.getString("name");
