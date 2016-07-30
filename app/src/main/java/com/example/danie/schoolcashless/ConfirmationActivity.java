@@ -28,7 +28,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     int intValue;
     Boolean firstRun = true;
 
-    ScheduledExecutorService scheduler;
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     GetTransaction mGetTransaction;
 
@@ -82,30 +82,31 @@ public class ConfirmationActivity extends AppCompatActivity {
             Log.d("Json", success.toString());
 
             JSONObject otherUser = success.getJSONObject("with");
-            otherPerson = otherUser.getString("name");
+            otherPerson = otherUser.getString("_id");
+            String otherPersonName = otherUser.getString("name");
 
             value = success.getDouble("value");
 
             JSONObject fromUser = success.getJSONObject("from");
-            String fromName = fromUser.getString("name");
+            String fromName = fromUser.getString("_id");
             JSONObject toUser = success.getJSONObject("to");
-            String toName = toUser.getString("name");
+            String toName = toUser.getString("_id");
 
             if (fromName.equalsIgnoreCase(otherPerson)) { //other initiated transaction
-                confirmPerson.setText(fromName);
+                confirmPerson.setText(otherPersonName);
                 uAreFrom = false;
                 if (value < 0) { //other paying u
-                    youChargeOtherGuy = true;
-                } else { //u paying other
                     youChargeOtherGuy = false;
+                } else { //u paying other
+                    youChargeOtherGuy = true;
                 }
             } else { //u initiated transaction
-                confirmPerson.setText(toName);
+                confirmPerson.setText(otherPersonName);
                 uAreFrom = true;
                 if (value > 0) {
-                    youChargeOtherGuy = true;
-                } else {
                     youChargeOtherGuy = false;
+                } else {
+                    youChargeOtherGuy = true;
                 }
             }
 
@@ -127,7 +128,6 @@ public class ConfirmationActivity extends AppCompatActivity {
                     btnAccept.setEnabled(false);
 
                     if (uAreFrom) {
-                        scheduler = Executors.newSingleThreadScheduledExecutor();
                         scheduler.scheduleAtFixedRate(new Runnable() {
                             public void run() {
                                 if(firstRun) {
@@ -143,7 +143,6 @@ public class ConfirmationActivity extends AppCompatActivity {
                         }, 0, 200, TimeUnit.MILLISECONDS);
 
                     } else {
-                        scheduler = Executors.newSingleThreadScheduledExecutor();
                         scheduler.scheduleAtFixedRate(new Runnable() {
                             public void run() {
                                 if(firstRun) {
