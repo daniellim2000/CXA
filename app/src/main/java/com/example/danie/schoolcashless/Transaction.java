@@ -84,6 +84,6 @@ public class Transaction {
     }
 
     public boolean isPaid() {
-        return price > 0;
+        return price < 0;
     }
 }
