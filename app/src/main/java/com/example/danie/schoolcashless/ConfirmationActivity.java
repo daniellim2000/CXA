@@ -27,6 +27,8 @@ public class ConfirmationActivity extends AppCompatActivity {
     double value;
     int intValue;
 
+    ScheduledExecutorService scheduler;
+
     GetTransaction mGetTransaction;
 
     UserSession userSession;
@@ -123,24 +125,26 @@ public class ConfirmationActivity extends AppCompatActivity {
 
                     if (uAreFrom) {
                         userSession.transactionConfirmFrom(id, true);
-                        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+                        scheduler = Executors.newSingleThreadScheduledExecutor();
                         scheduler.scheduleAtFixedRate(new Runnable() {
                             public void run() {
                                 if (userSession.transactionConfirmedTo(id)) {
                                     Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
                                     finish();
+                                    scheduler.shutdown();
                                 }
                             }
                         }, 0, 200, TimeUnit.MILLISECONDS);
 
                     } else {
                         userSession.transactionConfirmTo(id, true);
-                        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+                        scheduler = Executors.newSingleThreadScheduledExecutor();
                         scheduler.scheduleAtFixedRate(new Runnable() {
                             public void run() {
                                 if (userSession.transactionConfirmedFrom(id)) {
                                     Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
                                     finish();
+                                    scheduler.shutdown();
                                 }
                             }
                         }, 0, 200, TimeUnit.MILLISECONDS);
@@ -151,6 +155,13 @@ public class ConfirmationActivity extends AppCompatActivity {
         } catch(JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        scheduler.shutdown();
     }
 
     public class GetTransaction extends AsyncTask<Void, Void, JSONObject> {
