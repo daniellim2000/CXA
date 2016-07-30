@@ -26,6 +26,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     Boolean uAreFrom;
     double value;
     int intValue;
+    Boolean firstRun = true;
 
     ScheduledExecutorService scheduler;
 
@@ -118,16 +119,21 @@ public class ConfirmationActivity extends AppCompatActivity {
 
             confirmValue.setText(String.valueOf(Math.abs(value)));
 
+
+
             btnAccept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     btnAccept.setEnabled(false);
 
                     if (uAreFrom) {
-                        userSession.transactionConfirmFrom(id, true);
                         scheduler = Executors.newSingleThreadScheduledExecutor();
                         scheduler.scheduleAtFixedRate(new Runnable() {
                             public void run() {
+                                if(firstRun) {
+                                    userSession.transactionConfirmFrom(id, true);
+                                    firstRun=false;
+                                }
                                 if (userSession.transactionConfirmedTo(id)) {
                                     Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
                                     finish();
@@ -137,10 +143,13 @@ public class ConfirmationActivity extends AppCompatActivity {
                         }, 0, 200, TimeUnit.MILLISECONDS);
 
                     } else {
-                        userSession.transactionConfirmTo(id, true);
                         scheduler = Executors.newSingleThreadScheduledExecutor();
                         scheduler.scheduleAtFixedRate(new Runnable() {
                             public void run() {
+                                if(firstRun) {
+                                    userSession.transactionConfirmTo(id, true);
+                                    firstRun=false;
+                                }
                                 if (userSession.transactionConfirmedFrom(id)) {
                                     Toast.makeText(getApplicationContext(), "Transaction Complete!", Toast.LENGTH_SHORT).show();
                                     finish();
