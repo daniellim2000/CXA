@@ -1,12 +1,14 @@
 package com.example.danie.schoolcashless;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -32,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
 
     UserLoginTask mAuthTask = null;
 
+    String username, password;
+
     boolean showLoading = false;
 
     @Override
@@ -50,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
         mLoginView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Store values at the time of the login attempt.
+                username = mUsernameView.getText().toString();
+                password = mPasswordView.getText().toString();
                 login();
             }
         });
@@ -67,6 +74,15 @@ public class LoginActivity extends AppCompatActivity {
                 forgot();
             }
         });
+
+        SharedPreferences prefs = getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
+        username = prefs.getString("email", null);
+        password = prefs.getString("password", null);
+        Log.d("LOGIN", "Username: " + username);
+        Log.d("LOGIN", "Password: " + password);
+        if (username != null && password != null) {
+            login();
+        }
     }
 
     private boolean isEmailValid(String email) {
@@ -86,10 +102,6 @@ public class LoginActivity extends AppCompatActivity {
         mUsernameView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
         boolean cancel = false;
         View focusView = null;
 
@@ -101,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         }*/
 
         // Check for a valid email address.
-        if (mUsernameView.length() == 0) {
+        if (username.length() == 0) {
             mUsernameView.setError(getString(R.string.error_field_required));
             focusView = mUsernameView;
             cancel = true;
@@ -170,6 +182,10 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
+                SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
+                editor.putString("email", username);
+                editor.putString("password", password);
+                editor.commit();
                 finish();
                 Intent intent = new Intent(LoginActivity.this, SavingsActivity.class);
                 LoginActivity.this.startActivity(intent);

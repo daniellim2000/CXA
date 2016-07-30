@@ -45,7 +45,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         if (paid) {
             return "Paid $" + value + " to ";
         } else {
-            return "Received $" + value + " from";
+            return "Received $" + value + " from ";
         }
     }
 
