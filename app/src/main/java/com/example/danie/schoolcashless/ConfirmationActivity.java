@@ -92,21 +92,20 @@ public class ConfirmationActivity extends AppCompatActivity {
             JSONObject toUser = success.getJSONObject("to");
             String toName = toUser.getString("_id");
 
+            confirmPerson.setText(otherPersonName);
             if (fromName.equalsIgnoreCase(otherPerson)) { //other initiated transaction
-                confirmPerson.setText(otherPersonName);
                 uAreFrom = false;
                 if (value < 0) { //other paying u
-                    youChargeOtherGuy = false;
-                } else { //u paying other
                     youChargeOtherGuy = true;
+                } else { //u paying other
+                    youChargeOtherGuy = false;
                 }
             } else { //u initiated transaction
-                confirmPerson.setText(otherPersonName);
                 uAreFrom = true;
                 if (value > 0) {
-                    youChargeOtherGuy = false;
-                } else {
                     youChargeOtherGuy = true;
+                } else {
+                    youChargeOtherGuy = false;
                 }
             }
 
