@@ -117,9 +117,9 @@ public class QRCodeActivity extends AppCompatActivity {
 
             try {
                 if(isCharge) {
-                    json = userSession.createSendTransaction(value);
-                } else {
                     json = userSession.createReceiveTransaction(value);
+                } else {
+                    json = userSession.createSendTransaction(value);
                 }
                 id = json.getString("_id");
             } catch(Exception e) {
