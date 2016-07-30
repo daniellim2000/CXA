@@ -6,4 +6,19 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="AppTheme.NoActionBar.Meowify" parent="AppTheme.NoActionBar">
+        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="colorAccent">#fff</item>
+        <item name="android:colorForeground">#fff</item>
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="android:textColorPrimaryInverse">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">#fff</item>
+        <item name="android:textColorSecondaryInverse">#000</item>
+        <item name="android:textColorHint">#66ffffff</item>
+        <item name="android:textColorHintInverse">#000</item>
+        <item name="android:textColorTertiary">#ccffffff</item>
+        <item name="android:textColorTertiaryInverse">#000</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+    </style>
 </resources>

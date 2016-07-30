@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.danie.schoolcashless.model.UserSession;
@@ -21,7 +22,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     TextInputEditText mEmailView, mPasswordView, mConfirmPasswordView, mNameView;
     Button mRegisterView;
-    RotateLoading mRotateLoadingView;
+    ProgressBar mRotateLoadingView;
     View mRegisterFormView;
 
     UserRegisterTask mAuthTask = null;
@@ -38,7 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
         mConfirmPasswordView = (TextInputEditText) findViewById(R.id.register_confirmpassword);
         mNameView = (TextInputEditText) findViewById(R.id.register_name);
         mRegisterView = (Button) findViewById(R.id.register_btn_register);
-        mRotateLoadingView = (RotateLoading) findViewById(R.id.rotateloading);
+        mRotateLoadingView = (ProgressBar) findViewById(R.id.rotateloading);
         mRegisterFormView = findViewById(R.id.register_form);
 
         mRegisterView.setOnClickListener(new View.OnClickListener() {
@@ -173,11 +174,9 @@ public class RegisterActivity extends AppCompatActivity {
         if (show) {
             mRotateLoadingView.setVisibility(View.VISIBLE);
             mRegisterFormView.setVisibility(View.GONE);
-            mRotateLoadingView.start();
         } else {
             mRotateLoadingView.setVisibility(View.GONE);
             mRegisterFormView.setVisibility(View.VISIBLE);
-            mRotateLoadingView.stop();
         }
     }
 }

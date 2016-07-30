@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     TextInputEditText mUsernameView, mPasswordView;
     Button mRegisterView, mLoginView;
     TextView mForgotView;
-    RotateLoading mRotateLoadingView;
+    ProgressBar mRotateLoadingView;
     View mLoginFormView;
 
     UserLoginTask mAuthTask = null;
@@ -41,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginView = (Button) findViewById(R.id.login_btn_login);
         mRegisterView = (Button) findViewById(R.id.login_btn_register);
         mForgotView = (TextView) findViewById(R.id.login_btn_forgot);
-        mRotateLoadingView = (RotateLoading) findViewById(R.id.rotateloading);
+        mRotateLoadingView = (ProgressBar) findViewById(R.id.rotateloading);
         mLoginFormView = findViewById(R.id.login_form);
 
         mLoginView.setOnClickListener(new View.OnClickListener() {
@@ -187,11 +188,9 @@ public class LoginActivity extends AppCompatActivity {
         if (show) {
             mRotateLoadingView.setVisibility(View.VISIBLE);
             mLoginFormView.setVisibility(View.GONE);
-            mRotateLoadingView.start();
         } else {
             mRotateLoadingView.setVisibility(View.GONE);
             mLoginFormView.setVisibility(View.VISIBLE);
-            mRotateLoadingView.stop();
         }
     }
 }
