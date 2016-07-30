@@ -202,9 +202,10 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         if (id == R.id.nav_savings) {
             // Handle the camera action
             //ft.replace(R.id.container, savingsFragment).commit();
-        } else if (id == R.id.nav_payment) {
-            //ft.replace(R.id.container, paymentFragment).commit();
         }
+//        else if (id == R.id.nav_payment) {
+//            //ft.replace(R.id.container, paymentFragment).commit();
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

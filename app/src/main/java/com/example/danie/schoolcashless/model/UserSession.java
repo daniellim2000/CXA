@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -346,7 +348,7 @@ public class UserSession {
     public Boolean transactionConfirmFrom(String id, Boolean bool) {
         try {
             JSONObject json = new JSONObject();
-            json.put("confirmfrom", bool);
+            json.put("confirmedfrom", bool);
             requestPut("/transactions/" + id, json);
         } catch (Exception e) {
             e.printStackTrace();
@@ -365,7 +367,7 @@ public class UserSession {
     public Boolean transactionConfirmTo(String id, Boolean bool) {
         try {
             JSONObject json = new JSONObject();
-            json.put("confirmto", bool);
+            json.put("confirmedto", bool);
             requestPut("/transactions/" + id, json);
         } catch (Exception e) {
             e.printStackTrace();
@@ -415,6 +417,47 @@ public class UserSession {
      */
     public String requestPut(String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         return requestMethod("PUT", url, data);
+//        try {
+//            HttpsURLConnection connection = (HttpsURLConnection)new URL(ENDPOINT + url).openConnection();
+//            connection.setRequestProperty("Accept-Charset", "UTF-8");
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT));
+//            //connection.setRequestProperty("Accept-Version", APIVER);
+//            connection.setRequestMethod("PUT");
+//            connection.setDoOutput(true);
+//            connection.setDoInput(true);
+//
+//            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+//            out.write(data.toString());
+//            out.close();
+//            connection.getInputStream();
+//
+//
+//            connection.connect();
+//            int status = connection.getResponseCode();
+//            if (status == 200) {
+//                // yay
+//                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//                StringBuilder sb = new StringBuilder();
+//                String line;
+//                while ((line = br.readLine()) != null) {
+//                    sb.append(line + "\n");
+//                }
+//                br.close();
+//                return sb.toString();
+//            } else if (status == 401) {
+//                throw new BadAuthenticationException();
+//            } else {
+//                Log.e("Response code", String.valueOf(status));
+//                throw new BadResponseException(status);
+//            }
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace(); // impossible
+//        } catch (BadAuthenticationException e) {
+//            e.printStackTrace(); // should not happen
+//            throw e;
+//        }
+//        return null;
     }
 
 
