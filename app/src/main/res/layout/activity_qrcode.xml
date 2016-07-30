@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:text="Make a Transaction"
-                android:textColor="@color/black"
+                android:textColor="#000"
                 android:textSize="32sp"/>
 
             <TextView

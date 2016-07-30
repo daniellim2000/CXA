@@ -6,10 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -21,11 +23,12 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class PaymentFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+    public static final String RECIEVE = "recieve";
+    public static final String SEND = "send";
 
     private OnFragmentInteractionListener mListener;
 
-    private FloatingActionButton fab;
+    private String type = "recieve";
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -38,9 +41,10 @@ public class PaymentFragment extends Fragment {
      * @return A new instance of fragment PaymentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PaymentFragment newInstance() {
+    public static PaymentFragment newInstance(String type) {
         PaymentFragment fragment = new PaymentFragment();
         Bundle args = new Bundle();
+        args.putString("type", type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,6 +53,7 @@ public class PaymentFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            type = getArguments().getString("type");
         }
     }
 
@@ -57,23 +62,8 @@ public class PaymentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_payment, container, false);
-
-        fab = (FloatingActionButton) layout.findViewById(R.id.payment_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createTransaction();
-            }
-        });
-
+        ((TextView) layout.findViewById(R.id.mm)).setText(type);
         return layout;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onPaymentFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -143,4 +133,5 @@ public class PaymentFragment extends Fragment {
     private void generateQRCode() {
 
     }
+
 }
