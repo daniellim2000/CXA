@@ -98,6 +98,11 @@ public class SavingsActivity extends AppCompatActivity {
 
             }
         }));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         mTransactionsTask = new GetTransactionsTask();
         mTransactionsTask.execute((Void) null);
@@ -108,11 +113,10 @@ public class SavingsActivity extends AppCompatActivity {
     }
 
     private void getTransactions() throws JSONException, BadResponseException, IOException, BadAuthenticationException {
+        transactionList.removeAll(transactionList);
         if (jsonTransactions != null) {
             for (int i = 0; i < jsonTransactions.length(); i++) {
                 JSONObject json = jsonTransactions.getJSONObject(i);
-                JSONObject with = (JSONObject) json.get("with");
-                String name = (String) with.get("name");
                 Number value = (Number) json.get("value");
                 String id = (String) json.get("_id");
                 Transaction t = new Transaction(id, value.doubleValue());
@@ -133,7 +137,7 @@ public class SavingsActivity extends AppCompatActivity {
                 //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 String id = result.getContents();
                 mTransactionScanned = new TransactionScanned(id);
-                mTransactionScanned.execute((Void)null);
+                mTransactionScanned.execute((Void) null);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -381,7 +385,8 @@ public class SavingsActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
-                mBalanceView.setText("$" + String.format("%.2f", mBalance));
+                DecimalFormat df = new DecimalFormat("#.##");
+                mBalanceView.setText("$" + df.format(mBalance));
             } else {
                 Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
             }
