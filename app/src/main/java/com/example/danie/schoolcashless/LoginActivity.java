@@ -1,6 +1,7 @@
 package com.example.danie.schoolcashless;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -31,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     View mLoginFormView;
 
     UserLoginTask mAuthTask = null;
+
+    String username, password;
 
     boolean showLoading = false;
 
@@ -67,6 +70,13 @@ public class LoginActivity extends AppCompatActivity {
                 forgot();
             }
         });
+
+        SharedPreferences prefs = getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
+        String username = prefs.getString("username", "");//"No name defined" is the default value.
+        String password = prefs.getString("password", ""); //0 is the default value.
+        if(!username.equals("") && !password.equals("")) {
+            login();
+        }
     }
 
     private boolean isEmailValid(String email) {
@@ -87,8 +97,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        username = mUsernameView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -170,6 +180,10 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
+                SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
+                editor.putString("email", UserSession.getInstance().getUsername());
+                editor.putString("password", UserSession.getInstance().getUsername());
+                editor.commit();
                 finish();
                 Intent intent = new Intent(LoginActivity.this, SavingsActivity.class);
                 LoginActivity.this.startActivity(intent);
