@@ -2,6 +2,7 @@ package com.example.danie.schoolcashless;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,9 @@ import com.example.danie.schoolcashless.model.UserSession;
 import com.example.danie.schoolcashless.model.exception.BadAuthenticationException;
 import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.victor.loading.rotate.RotateLoading;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -123,6 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
         private final String mEmail;
         private final String mPassword;
         private final String mName;
+        private JSONObject json;
 
         UserRegisterTask(String name, String email, String password) {
             mEmail = email;
@@ -133,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... params) {
             try {
-                UserSession.createUser(mName, mEmail, mPassword);
+                json = new JSONObject(UserSession.createUser(mName, mEmail, mPassword).toString());
             } catch (BadResponseException e) {
                 e.printStackTrace();
                 return R.string.error_misbehaving;
@@ -143,6 +148,8 @@ public class RegisterActivity extends AppCompatActivity {
             } catch (BadAuthenticationException e) {
                 e.printStackTrace();
                 return R.string.error_authenticate;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             return 200;
@@ -154,11 +161,12 @@ public class RegisterActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
-                finish();
-                Intent intent = new Intent(RegisterActivity.this, SavingsActivity.class);
+                Snackbar.make(findViewById(R.id.parent), "Login Successful", Snackbar.LENGTH_SHORT).show();
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 RegisterActivity.this.startActivity(intent);
+                finish();
             } else {
-                Toast.makeText(getApplicationContext(), success, Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.parent), success, Snackbar.LENGTH_SHORT).show();
             }
         }
 

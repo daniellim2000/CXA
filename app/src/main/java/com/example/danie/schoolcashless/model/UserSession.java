@@ -251,15 +251,41 @@ public class UserSession {
         return new JSONObject(requestGet("/transactions/" + id));
     }
 
-
-    public Boolean transactionScanned(String id) {
+    /**
+     * Checks if the qr code of the transaction with id has been scanned.
+     *
+     * @param id The id of the transaction
+     * @return True if transaction has been scanned, false if not
+     */
+    public Boolean getTransactionScanned(String id) {
         try {
             JSONObject response = new JSONObject(requestGet("/transactions/" + id + "/scanned"));
-            return response.getBoolean("status");
+            Boolean i = response.getBoolean("status");
+            Log.d("scanned", id + i.toString());
+            return i;
         } catch(Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
+
+    /**
+     *
+     * @param id The id of the transaction
+     * @return True if transaction scanned value was updated, false if not
+     */
+    public Boolean putTransactionScanned(String id) {
+        try {
+            JSONObject request = new JSONObject();
+            request.put("scanned", true);
+            requestPut("/transactions/" + id, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * Checks whether transaction has been confirmed from -
@@ -321,10 +347,11 @@ public class UserSession {
             json.put("confirmfrom", true);
             requestPut("/transactions/" + id, json);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
-        } finally {
-            return true;
         }
+        return true;
+
     }
 
     /**
@@ -339,10 +366,10 @@ public class UserSession {
             json.put("confirmto", true);
             requestPut("/transactions/" + id, json);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
-        } finally {
-            return true;
         }
+        return true;
     }
 
 
@@ -360,12 +387,14 @@ public class UserSession {
 
 
     /**
-     * Sends a GET request for {@code url} to {@code ENDPOINT}
+     * Sends a POST request for {@code url} to {@code ENDPOINT}
      *
      * @param url Request path
+     * @param data JSON data to attach with request
      * @return Response data
      * @throws IOException
      * @throws BadResponseException
+     * @throws BadAuthenticationException
      */
     public String requestPost(String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         return requestMethod("POST", url, data);
@@ -376,9 +405,11 @@ public class UserSession {
      * Sends a PUT request for {@code url} to {@code ENDPOINT}
      *
      * @param url Request path
+     * @param data JSON data to attach with request
      * @return Response data
      * @throws IOException
      * @throws BadResponseException
+     * @throws BadAuthenticationException
      */
     public String requestPut(String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         return requestMethod("PUT", url, data);
@@ -386,12 +417,15 @@ public class UserSession {
 
 
     /**
-     * Sends a POST request for {@code url} to {@code ENDPOINT}
+     * Sends a POST request for {@code url} to {@code ENDPOINT}. Unlike requestPost() this
+     * does not attach the authentication of the user.
      *
      * @param url Request path
+     * @param data JSON data to attach with request
      * @return Response data
      * @throws IOException
      * @throws BadResponseException
+     * @throws BadAuthenticationException
      */
     public static String requestPostWithoutAuth(String url, JSONObject data) throws IOException, BadResponseException, BadAuthenticationException {
         try {

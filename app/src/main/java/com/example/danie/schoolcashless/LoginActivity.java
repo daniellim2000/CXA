@@ -18,6 +18,8 @@ import com.example.danie.schoolcashless.model.exception.BadAuthenticationExcepti
 import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.victor.loading.rotate.RotateLoading;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -150,13 +152,13 @@ public class LoginActivity extends AppCompatActivity {
                 UserSession.createInstance(mEmail, mPassword);
             } catch (BadResponseException e) {
                 e.printStackTrace();
-                return 0;
+                return R.string.error_misbehaving;
             } catch (IOException e) {
                 e.printStackTrace();
-                return 1;
+                return R.string.error_connection;
             } catch (BadAuthenticationException e) {
                 e.printStackTrace();
-                return 2;
+                return R.string.error_authenticate;
             }
 
             return 200;
@@ -172,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, SavingsActivity.class);
                 LoginActivity.this.startActivity(intent);
             } else {
-                Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.parent), success, Snackbar.LENGTH_SHORT).show();
             }
         }
 

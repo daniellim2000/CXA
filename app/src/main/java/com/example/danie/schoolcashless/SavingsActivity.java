@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -50,6 +51,8 @@ public class SavingsActivity extends AppCompatActivity {
     private GetBalanceTask mBalanceTask;
     private JSONArray jsonTransactions;
     private double mBalance;
+
+    private TransactionScanned mTransactionScanned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +111,11 @@ public class SavingsActivity extends AppCompatActivity {
         if (jsonTransactions != null) {
             for (int i = 0; i < jsonTransactions.length(); i++) {
                 JSONObject json = jsonTransactions.getJSONObject(i);
-                String name = (String) json.get("from");
+                JSONObject with = (JSONObject) json.get("with");
+                String name = (String) with.get("name");
                 Number value = (Number) json.get("value");
                 String id = (String) json.get("_id");
-                Transaction t = new Transaction(id, name, value.doubleValue());
+                Transaction t = new Transaction(id, value.doubleValue());
                 transactionList.add(t);
             }
         }
@@ -126,10 +130,44 @@ public class SavingsActivity extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                String id = result.getContents();
+                mTransactionScanned = new TransactionScanned(id);
+                mTransactionScanned.execute((Void)null);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public class TransactionScanned extends AsyncTask<Void, Void, Boolean> {
+
+        private final String id;
+
+        TransactionScanned(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return UserSession.getInstance().putTransactionScanned(id);
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mTransactionScanned = null;
+            if (success) {
+                Intent intent = new Intent(SavingsActivity.this, ConfirmationActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getApplicationContext(), "Error communicating with server", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mTransactionScanned = null;
         }
     }
 
@@ -343,7 +381,7 @@ public class SavingsActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
-                mBalanceView.setText("$" + mBalance);
+                mBalanceView.setText("$" + String.format("%.2f", mBalance));
             } else {
                 Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
             }
@@ -411,6 +449,9 @@ public class SavingsActivity extends AppCompatActivity {
     private void processTransactionDetails(Transaction transaction, JSONObject json) throws JSONException {
         Number completed = (Number) json.get("completed");
         transaction.setUnixTime(completed.intValue());
+        JSONObject with = (JSONObject) json.get("with");
+        String name = (String) with.get("name");
+        transaction.setWith(name);
     }
 
     private void showProgress(boolean show) {
