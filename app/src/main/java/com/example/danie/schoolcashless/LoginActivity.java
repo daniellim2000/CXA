@@ -93,6 +93,13 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() > 0;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mUsernameView.setError(null);
+        mPasswordView.setError(null);
+    }
+
     private void login() {
         if (mAuthTask != null) {
             return;

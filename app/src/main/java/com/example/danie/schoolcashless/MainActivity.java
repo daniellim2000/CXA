@@ -3,6 +3,7 @@ package com.example.danie.schoolcashless;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -144,11 +145,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -161,8 +157,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_savings) {
             // Handle the camera action
             //ft.replace(R.id.container, savingsFragment).commit();
-        } else if (id == R.id.nav_payment) {
+        } else if (id == R.id.nav_settings) {
             //ft.replace(R.id.container, paymentFragment).commit();
+        } else if (id == R.id.nav_logout) {
+            logout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -521,5 +519,14 @@ public class MainActivity extends AppCompatActivity
         JSONObject with = (JSONObject) json.get("with");
         String name = (String) with.get("name");
         transaction.setWith(name);
+    }
+
+    private void logout() {
+        SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
+        editor.putString("email", "");
+        editor.putString("password", "");
+        editor.commit();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 }
