@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -53,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
         mLoginView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Store values at the time of the login attempt.
+                username = mUsernameView.getText().toString();
+                password = mPasswordView.getText().toString();
                 login();
             }
         });
@@ -72,9 +76,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         SharedPreferences prefs = getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
-        String username = prefs.getString("username", "");//"No name defined" is the default value.
-        String password = prefs.getString("password", ""); //0 is the default value.
-        if(!username.equals("") && !password.equals("")) {
+        username = prefs.getString("email", null);
+        password = prefs.getString("password", null);
+        Log.d("LOGIN", "Username: " + username);
+        Log.d("LOGIN", "Password: " + password);
+        if (username != null && password != null) {
             login();
         }
     }
@@ -96,10 +102,6 @@ public class LoginActivity extends AppCompatActivity {
         mUsernameView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
-        username = mUsernameView.getText().toString();
-        password = mPasswordView.getText().toString();
-
         boolean cancel = false;
         View focusView = null;
 
@@ -111,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         }*/
 
         // Check for a valid email address.
-        if (mUsernameView.length() == 0) {
+        if (username.length() == 0) {
             mUsernameView.setError(getString(R.string.error_field_required));
             focusView = mUsernameView;
             cancel = true;
@@ -181,8 +183,8 @@ public class LoginActivity extends AppCompatActivity {
 
             if (success == 200) {
                 SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
-                editor.putString("email", UserSession.getInstance().getUsername());
-                editor.putString("password", UserSession.getInstance().getUsername());
+                editor.putString("email", username);
+                editor.putString("password", password);
                 editor.commit();
                 finish();
                 Intent intent = new Intent(LoginActivity.this, SavingsActivity.class);
