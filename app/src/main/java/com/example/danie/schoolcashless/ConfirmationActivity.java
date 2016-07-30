@@ -28,8 +28,6 @@ public class ConfirmationActivity extends AppCompatActivity {
     int intValue;
     Boolean firstRun = true;
 
-    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
     GetTransaction mGetTransaction;
 
     UserSession userSession;
@@ -43,6 +41,8 @@ public class ConfirmationActivity extends AppCompatActivity {
 
     Button btnAccept;
     Button btnDecline;
+
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
