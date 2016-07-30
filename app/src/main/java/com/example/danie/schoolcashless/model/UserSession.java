@@ -295,7 +295,7 @@ public class UserSession {
      * @param id The id of the transaction
      * @return True if transaction confirmed from, false if transaction now confirmed from
      */
-    public Boolean transactionConfirmedFrom(int id) {
+    public Boolean transactionConfirmedFrom(String id) {
         try{
             JSONObject response = new JSONObject(requestGet("/transactions/" + id + "/confirmedfrom"));
             return response.getBoolean("status");
@@ -313,7 +313,7 @@ public class UserSession {
      * @param id The id of the transaction
      * @return True if transaction confirmed from, false if transaction now confirmed from
      */
-    public Boolean transactionConfirmedTo(int id) {
+    public Boolean transactionConfirmedTo(String id) {
         try{
             JSONObject response = new JSONObject(requestGet("/transactions/" + id + "/confirmedto"));
             return response.getBoolean("status");
@@ -341,7 +341,7 @@ public class UserSession {
      * @param id The id of the transaction
      * @return True if confirmfrom successfully updated, false if not
      */
-    public Boolean transactionConfirmFrom(int id) {
+    public Boolean transactionConfirmFrom(String id) {
         try {
             JSONObject json = new JSONObject();
             json.put("confirmfrom", true);
@@ -360,7 +360,7 @@ public class UserSession {
      * @param id The id of the transaction
      * @return True if confirmto successfully updated, false if not
      */
-    public Boolean transactionConfirmTo(int id) {
+    public Boolean transactionConfirmTo(String id) {
         try {
             JSONObject json = new JSONObject();
             json.put("confirmto", true);

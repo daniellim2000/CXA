@@ -1,0 +1,2 @@
+1) Error in log in not showing properly
+2) Forgot password screen not styled yet

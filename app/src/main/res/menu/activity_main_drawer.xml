@@ -7,9 +7,13 @@
             android:icon="@drawable/ic_filter_none_black_24dp"
             android:title="Savings" />
         <item
-            android:id="@+id/nav_payment"
-            android:icon="@drawable/ic_money_24dp"
-            android:title="Payment" />
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_exit_to_app_black_24px"
+            android:title="Logout" />
     </group>
 
 </menu>
