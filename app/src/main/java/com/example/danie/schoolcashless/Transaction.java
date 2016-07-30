@@ -1,8 +1,5 @@
 package com.example.danie.schoolcashless;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -16,13 +13,12 @@ public class Transaction {
     private int unixTime;
     private int storeId;
     private String id;
-    private String from;
+    private String with;
     private double price;
+    private boolean paid; // paid or received
 
-    public Transaction(String id, String from, double price) {
+    public Transaction(String id, double price) {
         this.id = id;
-        this.unixTime = unixTime;
-        this.from = from;
         this.price = price;
     }
 
@@ -71,12 +67,12 @@ public class Transaction {
         return formattedDate;
     }
 
-    public String getFrom() {
-        return from;
+    public String getWith() {
+        return with;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setWith(String with) {
+        this.with = with;
     }
 
     public String getId() {
@@ -85,5 +81,9 @@ public class Transaction {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isPaid() {
+        return price > 0;
     }
 }

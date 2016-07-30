@@ -111,10 +111,11 @@ public class SavingsActivity extends AppCompatActivity {
         if (jsonTransactions != null) {
             for (int i = 0; i < jsonTransactions.length(); i++) {
                 JSONObject json = jsonTransactions.getJSONObject(i);
-                String name = json.get("from").toString();
+                JSONObject with = (JSONObject) json.get("with");
+                String name = (String) with.get("name");
                 Number value = (Number) json.get("value");
                 String id = (String) json.get("_id");
-                Transaction t = new Transaction(id, name, value.doubleValue());
+                Transaction t = new Transaction(id, value.doubleValue());
                 transactionList.add(t);
             }
         }
@@ -380,7 +381,7 @@ public class SavingsActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success == 200) {
-                mBalanceView.setText("$" + mBalance);
+                mBalanceView.setText("$" + String.format("%.2f", mBalance));
             } else {
                 Toast.makeText(getApplicationContext(), "" + success, Toast.LENGTH_SHORT).show();
             }
@@ -448,6 +449,9 @@ public class SavingsActivity extends AppCompatActivity {
     private void processTransactionDetails(Transaction transaction, JSONObject json) throws JSONException {
         Number completed = (Number) json.get("completed");
         transaction.setUnixTime(completed.intValue());
+        JSONObject with = (JSONObject) json.get("with");
+        String name = (String) with.get("name");
+        transaction.setWith(name);
     }
 
     private void showProgress(boolean show) {
