@@ -5,28 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.danie.schoolcashless.model.UserSession;
-import com.example.danie.schoolcashless.model.exception.BadAuthenticationException;
-import com.example.danie.schoolcashless.model.exception.BadResponseException;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
-import com.victor.loading.rotate.RotateLoading;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -68,12 +62,15 @@ public class QRCodeActivity extends AppCompatActivity {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
-                if(userSession.transactionScanned(id)) {
+                if(userSession.getTransactionScanned(id)) {
+                    Log.d("successscan", "Transaction was Scanned successfully");
+                    startConfirmationActivity(id);
                     scheduler.shutdown();
                 }
             }
         }, 0, 200, TimeUnit.MILLISECONDS);
     }
+
 
     @Override
     protected void onStop() {
@@ -96,6 +93,13 @@ public class QRCodeActivity extends AppCompatActivity {
         }
 
         return imageBitmap;
+    }
+
+    private void startConfirmationActivity(String id) {
+        Intent intent = new Intent(this, ConfirmationActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
+        finish();
     }
 
     public class CreateTransaction extends AsyncTask<Void, Void, JSONObject> {
